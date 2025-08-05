@@ -35,3 +35,5 @@ src/OrcaSlicer-doc/
 **/.flatpak-builder/
 resources/profiles/user/default
 *.code-workspace
+.*.swp
+/grep_*.txt
