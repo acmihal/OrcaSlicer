@@ -3300,6 +3300,10 @@
         {
             "name": "AliZ PLA @P1-X1",
             "sub_path": "filament/AliZ/AliZ PLA @P1-X1.json"
+        },
+        {
+            "name": "Creality CR-PETG",
+            "sub_path": "filament/Creality CR-PETG.json"
         }
     ],
     "machine_list": [
