@@ -32,9 +32,6 @@
     "pressure_advance": [
         "0.034"
     ],
-    "filament_retraction_length": [
-        "0.2"
-    ],
     "filament_max_volumetric_speed": [
         "19"
     ]
