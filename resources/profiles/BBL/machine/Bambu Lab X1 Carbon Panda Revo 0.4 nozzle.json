@@ -1,0 +1,10 @@
+{
+    "type": "machine",
+    "name": "Bambu Lab X1 Carbon Panda Revo 0.4 nozzle",
+    "inherits": "Bambu Lab X1 Carbon 0.4 nozzle",
+    "from": "system",
+    "setting_id": "GM041",
+    "instantiation": "true",
+    "printer_model": "Bambu Lab X1 Carbon Panda Revo",
+    "upward_compatible_machine": [ ]
+}
