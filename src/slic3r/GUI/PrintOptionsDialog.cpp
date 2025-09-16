@@ -439,9 +439,27 @@ PrinterPartsDialog::PrinterPartsDialog(wxWindow* parent)
 {
     nozzle_type_map[NozzleType::ntHardenedSteel]    = _L("Hardened Steel");
     nozzle_type_map[NozzleType::ntStainlessSteel]   = _L("Stainless Steel");
+    nozzle_type_map[NozzleType::ntBrass]            = _L("Brass");
+    nozzle_type_map[NozzleType::ntRevoBrass]        = _L("Revo Brass");
+    nozzle_type_map[NozzleType::ntRevoBrassHF]      = _L("Revo Brass HF");
+    nozzle_type_map[NozzleType::ntRevoDiamondback]  = _L("Revo Diamondback");
+    nozzle_type_map[NozzleType::ntRevoObxidian]     = _L("Revo ObXidian");
+    nozzle_type_map[NozzleType::ntRevoObxidianHF]   = _L("Revo ObXidian HF");
+    nozzle_type_map[NozzleType::ntRevoHTA]          = _L("Revo HTA");
+    nozzle_type_map[NozzleType::ntRevoHighTemp]     = _L("Revo High Temperature");
+    nozzle_type_map[NozzleType::ntRevoHFHTA]        = _L("Revo High Flow HTA");
 
     nozzle_type_selection_map[NozzleType::ntHardenedSteel]  = 0;
     nozzle_type_selection_map[NozzleType::ntStainlessSteel] = 1;
+    nozzle_type_selection_map[NozzleType::ntBrass] = 2;
+    nozzle_type_selection_map[NozzleType::ntRevoBrass] = 3;
+    nozzle_type_selection_map[NozzleType::ntRevoBrassHF] = 4;
+    nozzle_type_selection_map[NozzleType::ntRevoDiamondback] = 5;
+    nozzle_type_selection_map[NozzleType::ntRevoObxidian] = 6;
+    nozzle_type_selection_map[NozzleType::ntRevoObxidianHF] = 7;
+    nozzle_type_selection_map[NozzleType::ntRevoHTA] = 8;
+    nozzle_type_selection_map[NozzleType::ntRevoHighTemp] = 9;
+    nozzle_type_selection_map[NozzleType::ntRevoHFHTA] = 10;
 
     nozzle_stainless_diameter_map[0] = 0.2;
     nozzle_stainless_diameter_map[1] = 0.4;
@@ -449,6 +467,52 @@ PrinterPartsDialog::PrinterPartsDialog(wxWindow* parent)
     nozzle_hard_diameter_map[0] = 0.4;
     nozzle_hard_diameter_map[1] = 0.6;
     nozzle_hard_diameter_map[2] = 0.8;
+
+    nozzle_revo_brass_diameter_map[0] = 0.15;
+    nozzle_revo_brass_diameter_map[1] = 0.25;
+    nozzle_revo_brass_diameter_map[2] = 0.4;
+    nozzle_revo_brass_diameter_map[3] = 0.6;
+    nozzle_revo_brass_diameter_map[4] = 0.8;
+
+    nozzle_revo_brass_hf_diameter_map[0] = 0.4;
+    nozzle_revo_brass_hf_diameter_map[1] = 0.6;
+    nozzle_revo_brass_hf_diameter_map[2] = 0.8;
+    nozzle_revo_brass_hf_diameter_map[3] = 1.0;
+    nozzle_revo_brass_hf_diameter_map[4] = 1.2;
+    nozzle_revo_brass_hf_diameter_map[5] = 1.4;
+
+    nozzle_revo_diamondback_diameter_map[0] = 0.25;
+    nozzle_revo_diamondback_diameter_map[1] = 0.4;
+    nozzle_revo_diamondback_diameter_map[2] = 0.6;
+    nozzle_revo_diamondback_diameter_map[3] = 0.8;
+
+    nozzle_revo_obxidian_diameter_map[0] = 0.25;
+    nozzle_revo_obxidian_diameter_map[1] = 0.4;
+    nozzle_revo_obxidian_diameter_map[2] = 0.6;
+    nozzle_revo_obxidian_diameter_map[3] = 0.8;
+
+    nozzle_revo_obxidian_hf_diameter_map[0] = 0.4;
+    nozzle_revo_obxidian_hf_diameter_map[1] = 0.6;
+    nozzle_revo_obxidian_hf_diameter_map[2] = 0.8;
+    nozzle_revo_obxidian_hf_diameter_map[3] = 1.0;
+    nozzle_revo_obxidian_hf_diameter_map[4] = 1.2;
+    nozzle_revo_obxidian_hf_diameter_map[5] = 1.4;
+
+    nozzle_revo_hta_diameter_map[0] = 0.25;
+    nozzle_revo_hta_diameter_map[1] = 0.4;
+    nozzle_revo_hta_diameter_map[2] = 0.6;
+    nozzle_revo_hta_diameter_map[3] = 0.8;
+
+    nozzle_revo_high_temp_diameter_map[0] = 0.4;
+    nozzle_revo_high_temp_diameter_map[1] = 0.6;
+    nozzle_revo_high_temp_diameter_map[2] = 0.8;
+
+    nozzle_revo_hf_hta_diameter_map[0] = 0.4;
+    nozzle_revo_hf_hta_diameter_map[1] = 0.6;
+    nozzle_revo_hf_hta_diameter_map[2] = 0.8;
+    nozzle_revo_hf_hta_diameter_map[3] = 1.0;
+    nozzle_revo_hf_hta_diameter_map[4] = 1.2;
+    nozzle_revo_hf_hta_diameter_map[5] = 1.4;
 
     SetBackgroundColour(*wxWHITE);
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
@@ -557,6 +621,24 @@ void PrinterPartsDialog::set_nozzle_data(wxCommandEvent& evt)
                     diameter_map = nozzle_hard_diameter_map;
                 } else if (nozzle_type == NozzleType::ntStainlessSteel) {
                     diameter_map = nozzle_stainless_diameter_map;
+                } else if (nozzle_type == NozzleType::ntBrass) {
+                    diameter_map = nozzle_brass_diameter_map;
+                } else if (nozzle_type == NozzleType::ntRevoBrass) {
+                    diameter_map = nozzle_revo_brass_diameter_map;
+                } else if (nozzle_type == NozzleType::ntRevoBrassHF) {
+                    diameter_map = nozzle_revo_brass_hf_diameter_map;
+                } else if (nozzle_type == NozzleType::ntRevoDiamondback) {
+                    diameter_map = nozzle_revo_diamondback_diameter_map;
+                } else if (nozzle_type == NozzleType::ntRevoObxidian) {
+                    diameter_map = nozzle_revo_obxidian_diameter_map;
+                } else if (nozzle_type == NozzleType::ntRevoObxidianHF) {
+                    diameter_map = nozzle_revo_obxidian_hf_diameter_map;
+                } else if (nozzle_type == NozzleType::ntRevoHTA) {
+                    diameter_map = nozzle_revo_hta_diameter_map;
+                } else if (nozzle_type == NozzleType::ntRevoHighTemp) {
+                    diameter_map = nozzle_revo_high_temp_diameter_map;
+                } else if (nozzle_type == NozzleType::ntRevoHFHTA) {
+                    diameter_map = nozzle_revo_hf_hta_diameter_map;
                 }
 
                 for (int i = 0; i < diameter_map.size(); i++) { nozzle_diameter_checkbox->Append(wxString::Format(_L("%.1f"), diameter_map[i])); }
@@ -607,10 +689,28 @@ bool PrinterPartsDialog::Show(bool show)
                 diameter_map = nozzle_hard_diameter_map;
             } else if (type == NozzleType::ntStainlessSteel) {
                 diameter_map = nozzle_stainless_diameter_map;
+            } else if (nozzle_type == NozzleType::ntBrass) {
+                diameter_map = nozzle_brass_diameter_map;
+            } else if (nozzle_type == NozzleType::ntRevoBrass) {
+                diameter_map = nozzle_revo_brass_diameter_map;
+            } else if (nozzle_type == NozzleType::ntRevoBrassHF) {
+                diameter_map = nozzle_revo_brass_hf_diameter_map;
+            } else if (nozzle_type == NozzleType::ntRevoDiamondback) {
+                diameter_map = nozzle_revo_diamondback_diameter_map;
+            } else if (nozzle_type == NozzleType::ntRevoObxidian) {
+                diameter_map = nozzle_revo_obxidian_diameter_map;
+            } else if (nozzle_type == NozzleType::ntRevoObxidianHF) {
+                diameter_map = nozzle_revo_obxidian_hf_diameter_map;
+            } else if (nozzle_type == NozzleType::ntRevoHTA) {
+                diameter_map = nozzle_revo_hta_diameter_map;
+            } else if (nozzle_type == NozzleType::ntRevoHighTemp) {
+                diameter_map = nozzle_revo_high_temp_diameter_map;
+            } else if (nozzle_type == NozzleType::ntRevoHFHTA) {
+                diameter_map = nozzle_revo_hf_hta_diameter_map;
             }
 
             for (int i = 0; i < diameter_map.size(); i++) {
-                nozzle_diameter_checkbox->Append(wxString::Format(_L("%.1f"), diameter_map[i]));
+                nozzle_diameter_checkbox->Append(wxString::Format(_L("%.2f"), diameter_map[i]));
                 if (diameter == diameter_map[i]) {
                     nozzle_diameter_checkbox->SetSelection(i);
                 }

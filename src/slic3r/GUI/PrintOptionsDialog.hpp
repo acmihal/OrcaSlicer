@@ -33,6 +33,15 @@ protected:
     std::map<NozzleType, int> nozzle_type_selection_map;
     std::map<int, float> nozzle_stainless_diameter_map;
     std::map<int, float> nozzle_hard_diameter_map;
+    std::map<int, float> nozzle_brass_diameter_map;
+    std::map<int, float> nozzle_revo_brass_diameter_map;
+    std::map<int, float> nozzle_revo_brass_hf_diameter_map;
+    std::map<int, float> nozzle_revo_diamondback_diameter_map;
+    std::map<int, float> nozzle_revo_obxidian_diameter_map;
+    std::map<int, float> nozzle_revo_obxidian_hf_diameter_map;
+    std::map<int, float> nozzle_revo_hta_diameter_map;
+    std::map<int, float> nozzle_revo_high_temp_diameter_map;
+    std::map<int, float> nozzle_revo_hf_hta_diameter_map;
 public:
     PrinterPartsDialog(wxWindow* parent);
     ~PrinterPartsDialog();

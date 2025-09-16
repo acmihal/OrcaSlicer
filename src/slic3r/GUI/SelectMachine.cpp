@@ -1917,6 +1917,33 @@ wxString SelectMachineDialog::format_steel_name(NozzleType type)
     else if (type == NozzleType::ntStainlessSteel) {
         return _L("Stainless Steel");
     }
+    else if (type == NozzleType::ntBrass) {
+        return _L("Brass");
+    }
+    else if (type == NozzleType::ntRevoBrass) {
+        return _L("Revo Brass");
+    }
+    else if (type == NozzleType::ntRevoBrassHF) {
+        return _L("Revo Brass HF");
+    }
+    else if (type == NozzleType::ntRevoDiamondback) {
+        return _L("Revo Diamondback");
+    }
+    else if (type == NozzleType::ntRevoObxidian) {
+        return _L("Revo ObXidian");
+    }
+    else if (type == NozzleType::ntRevoObxidianHF) {
+        return _L("Revo ObXidian HF");
+    }
+    else if (type == NozzleType::ntRevoHTA) {
+        return _L("Revo HTA");
+    }
+    else if (type == NozzleType::ntRevoHighTemp) {
+        return _L("Revo High Temperature");
+    }
+    else if (type == NozzleType::ntRevoHFHTA) {
+        return _L("Revo HF HTA");
+    }
 
     return _L("Unknown");
 }

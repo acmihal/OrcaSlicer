@@ -302,6 +302,14 @@ enum NozzleType {
     ntHardenedSteel,
     ntStainlessSteel,
     ntBrass,
+    ntRevoBrass,
+    ntRevoBrassHF,
+    ntRevoDiamondback,
+    ntRevoObxidian,
+    ntRevoObxidianHF,
+    ntRevoHTA,
+    ntRevoHighTemp,
+    ntRevoHFHTA,
     ntCount
 };
 
@@ -309,14 +317,30 @@ static std::unordered_map<NozzleType, std::string>NozzleTypeEumnToStr = {
     {NozzleType::ntUndefine,        "undefine"},
     {NozzleType::ntHardenedSteel,   "hardened_steel"},
     {NozzleType::ntStainlessSteel,  "stainless_steel"},
-    {NozzleType::ntBrass,           "brass"}
+    {NozzleType::ntBrass,           "brass"},
+    {NozzleType::ntRevoBrass,       "revo_brass"},
+    {NozzleType::ntRevoBrassHF,     "revo_brass_hf"},
+    {NozzleType::ntRevoDiamondback, "revo_diamondback"},
+    {NozzleType::ntRevoObxidian,    "revo_obxidian"},
+    {NozzleType::ntRevoObxidianHF,  "revo_obxidian_hf"},
+    {NozzleType::ntRevoHTA,         "revo_hta"},
+    {NozzleType::ntRevoHighTemp,    "revo_high_temp"},
+    {NozzleType::ntRevoHFHTA,       "revo_hf_hta"}
 };
 
 static std::unordered_map<std::string, NozzleType>NozzleTypeStrToEumn = {
     {"undefine", NozzleType::ntUndefine},
     {"hardened_steel", NozzleType::ntHardenedSteel},
     {"stainless_steel", NozzleType::ntStainlessSteel},
-    {"brass", NozzleType::ntBrass}
+    {"brass", NozzleType::ntBrass},
+    {"revo_brass", NozzleType::ntRevoBrass},
+    {"revo_brass_hf", NozzleType::ntRevoBrassHF},
+    {"revo_diamondback", NozzleType::ntRevoDiamondback},
+    {"revo_obxidian", NozzleType::ntRevoObxidian},
+    {"revo_obxidian_hf", NozzleType::ntRevoObxidianHF},
+    {"revo_hta", NozzleType::ntRevoHTA},
+    {"revo_high_temp", NozzleType::ntRevoHighTemp},
+    {"revo_hf_hta", NozzleType::ntRevoHFHTA}
 };
 
 // BBS

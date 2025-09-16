@@ -119,8 +119,14 @@ wxString get_stage_string(int stage)
 std::string to_string_nozzle_diameter(float nozzle_diameter)
 {
     float eps = 1e-3;
-    if (abs(nozzle_diameter - 0.2) < eps) {
+    if (abs(nozzle_diameter - 0.15) < eps) {
+        return "0.15";
+    }
+    else if (abs(nozzle_diameter - 0.2) < eps) {
         return "0.2";
+    }
+    else if (abs(nozzle_diameter - 0.25) < eps) {
+        return "0.25";
     }
     else if (abs(nozzle_diameter - 0.4) < eps) {
         return "0.4";
@@ -130,6 +136,15 @@ std::string to_string_nozzle_diameter(float nozzle_diameter)
     }
     else if (abs(nozzle_diameter - 0.8) < eps) {
         return "0.8";
+    }
+    else if (abs(nozzle_diameter - 1.0) < eps) {
+        return "1.0";
+    }
+    else if (abs(nozzle_diameter - 1.2) < eps) {
+        return "1.2";
+    }
+    else if (abs(nozzle_diameter - 1.4) < eps) {
+        return "1.4";
     }
     return "0";
 }
@@ -6025,8 +6040,8 @@ void MachineObject::check_ams_filament_valid()
 bool DeviceManager::EnableMultiMachine = false;
 bool DeviceManager::key_field_only = false;
 
-std::vector<float> nozzle_diameter_list{ 0.2f,0.4f,0.6f,0.8f };
-std::vector<std::string> nozzle_type_list{ "hardened_steel", "stainless_steel" };
+std::vector<float> nozzle_diameter_list{ 0.15f,0.2f,0.25f,0.4f,0.6f,0.8f,1.0f,1.2f,1.4f };
+std::vector<std::string> nozzle_type_list{ "hardened_steel", "stainless_steel", "revo_brass", "revo_brass_hf", "revo_diamondback", "revo_obxidian", "revo_obxidian_hf", "revo_hta", "revo_high_temp", "revo_hf_hta" };
 
 DeviceManager::DeviceManager(NetworkAgent* agent)
 {

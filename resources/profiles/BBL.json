@@ -32,6 +32,10 @@
         {
             "name": "Bambu Lab A1",
             "sub_path": "machine/Bambu Lab A1.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo.json"
         }
     ],
     "process_list": [
@@ -4258,6 +4262,38 @@
         {
             "name": "Bambu Lab A1 0.8 nozzle",
             "sub_path": "machine/Bambu Lab A1 0.8 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo 0.15 nozzle.json",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo 0.15 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo 0.25 nozzle.json",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo 0.25 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo 0.4 nozzle.json",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo 0.4 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo 0.6 nozzle.json",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo 0.6 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo 0.8 nozzle.json",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo 0.8 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo 1.0 nozzle.json",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo 1.0 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo 1.2 nozzle.json",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo 1.2 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo 1.4 nozzle.json",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo 1.4 nozzle.json"
         }
     ]
 }

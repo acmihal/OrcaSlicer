@@ -2564,7 +2564,15 @@ int Print::get_hrc_by_nozzle_type(const NozzleType&type)
                 {"hardened_steel",55},
                 {"stainless_steel",20},
                 {"brass",2},
-                {"undefine",0}
+                {"undefine",0},
+                {"revo_brass",2},
+                {"revo_brass_hf",2},
+                {"revo_diamondback",55},
+                {"revo_obxidian",55},
+                {"revo_obxidian_hf",55},
+                {"revo_hta",55},
+                {"revo_high_temp",20},
+                {"revo_hf_hta",55}
             };
         }
     }
