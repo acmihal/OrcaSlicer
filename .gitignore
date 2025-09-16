@@ -39,3 +39,4 @@ resources/profiles/user/default
 deps_src/build/
 .*.swp
 /grep_*.txt
+/2025*
