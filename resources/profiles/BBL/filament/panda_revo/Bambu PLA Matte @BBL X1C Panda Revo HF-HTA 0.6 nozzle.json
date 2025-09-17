@@ -1,0 +1,11 @@
+{
+    "type": "filament",
+    "name": "Bambu PLA Matte @BBL X1C Panda Revo HF-HTA 0.6 nozzle",
+    "inherits": "Bambu PLA Matte @BBL X1C",
+    "from": "system",
+    "setting_id": "GFSA01_84",
+    "instantiation": "true",
+    "compatible_printers": [
+        "Bambu Lab X1 Carbon Panda Revo HF-HTA 0.6 nozzle"
+    ]
+}

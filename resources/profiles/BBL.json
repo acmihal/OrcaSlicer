@@ -4484,6 +4484,158 @@
         {
             "name": "Overture TPU @BBL X1C 0.2 nozzle",
             "sub_path": "filament/Overture/Overture TPU @BBL X1C 0.2 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo Brass 0.15 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo Brass 0.15 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo Brass 0.25 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo Brass 0.25 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo Brass 0.4 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo Brass 0.4 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo Brass 0.6 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo Brass 0.6 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo Brass 0.8 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo Brass 0.8 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo Brass HF 0.4 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo Brass HF 0.4 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo Brass HF 0.6 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo Brass HF 0.6 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo Brass HF 0.8 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo Brass HF 0.8 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo Brass HF 1.0 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo Brass HF 1.0 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo Brass HF 1.2 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo Brass HF 1.2 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo Brass HF 1.4 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo Brass HF 1.4 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo Diamondback 0.25 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo Diamondback 0.25 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo Diamondback 0.4 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo Diamondback 0.4 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo Diamondback 0.6 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo Diamondback 0.6 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo Diamondback 0.8 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo Diamondback 0.8 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo ObXidian 0.25 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo ObXidian 0.25 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo ObXidian 0.4 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo ObXidian 0.4 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo ObXidian 0.6 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo ObXidian 0.6 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo ObXidian 0.8 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo ObXidian 0.8 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo ObXidian HF 0.4 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo ObXidian HF 0.4 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo ObXidian HF 0.6 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo ObXidian HF 0.6 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo ObXidian HF 0.8 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo ObXidian HF 0.8 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo ObXidian HF 1.0 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo ObXidian HF 1.0 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo ObXidian HF 1.2 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo ObXidian HF 1.2 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo ObXidian HF 1.4 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo ObXidian HF 1.4 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo HTA 0.25 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo HTA 0.25 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo HTA 0.4 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo HTA 0.4 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo HTA 0.6 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo HTA 0.6 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo HTA 0.8 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo HTA 0.8 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo High Temperature 0.4 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo High Temperature 0.4 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo High Temperature 0.6 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo High Temperature 0.6 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo High Temperature 0.8 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo High Temperature 0.8 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo HF-HTA 0.4 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo HF-HTA 0.4 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo HF-HTA 0.6 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo HF-HTA 0.6 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo HF-HTA 0.8 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo HF-HTA 0.8 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo HF-HTA 1.0 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo HF-HTA 1.0 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo HF-HTA 1.2 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo HF-HTA 1.2 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo HF-HTA 1.4 nozzle",
+            "sub_path": "filament/panda_revo/Bambu PLA Matte @BBL X1C Panda Revo HF-HTA 1.4 nozzle.json"
         }
     ],
     "machine_list": [

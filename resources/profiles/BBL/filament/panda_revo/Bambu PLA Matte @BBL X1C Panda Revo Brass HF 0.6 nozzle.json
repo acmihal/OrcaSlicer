@@ -1,0 +1,11 @@
+{
+    "type": "filament",
+    "name": "Bambu PLA Matte @BBL X1C Panda Revo Brass HF 0.6 nozzle",
+    "inherits": "Bambu PLA Matte @BBL X1C",
+    "from": "system",
+    "setting_id": "GFSA01_24",
+    "instantiation": "true",
+    "compatible_printers": [
+        "Bambu Lab X1 Carbon Panda Revo Brass HF 0.6 nozzle"
+    ]
+}

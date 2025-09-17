@@ -1,0 +1,11 @@
+{
+    "type": "filament",
+    "name": "Bambu PLA Matte @BBL X1C Panda Revo ObXidian HF 1.4 nozzle",
+    "inherits": "Bambu PLA Matte @BBL X1C 0.8 nozzle",
+    "from": "system",
+    "setting_id": "GFSA01_58",
+    "instantiation": "true",
+    "compatible_printers": [
+        "Bambu Lab X1 Carbon Panda Revo ObXidian HF 1.4 nozzle"
+    ]
+}
