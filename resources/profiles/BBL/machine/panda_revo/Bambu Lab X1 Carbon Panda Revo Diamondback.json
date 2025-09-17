@@ -1,0 +1,12 @@
+{
+    "type": "machine_model",
+    "name": "Bambu Lab X1 Carbon Panda Revo Diamondback",
+    "nozzle_diameter": "0.25;0.4;0.6;0.8",
+    "bed_model": "bbl-3dp-X1.stl",
+    "bed_texture": "bbl-3dp-logo.svg",
+    "default_bed_type": "Textured PEI Plate",
+    "family": "BBL-3DP",
+    "machine_tech": "FFF",
+    "model_id": "PR3",
+    "default_materials": "Bambu PLA Matte @BBL X1C Panda Revo Diamondback"
+}

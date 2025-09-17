@@ -1,0 +1,19 @@
+{
+    "type": "machine",
+    "name": "Bambu Lab X1 Carbon Panda Revo 0.6 nozzle",
+    "inherits": "Bambu Lab X1 Carbon 0.6 nozzle",
+    "from": "system",
+    "setting_id": "GM0404",
+    "instantiation": "false",
+    "printer_variant": "0.6",
+    "upward_compatible_machine": [ ],
+    "nozzle_diameter": [
+        "0.6"
+    ],
+    "max_layer_height": [
+        "0.42"
+    ],
+    "min_layer_height": [
+        "0.12"
+    ]
+}

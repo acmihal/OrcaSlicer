@@ -689,23 +689,23 @@ bool PrinterPartsDialog::Show(bool show)
                 diameter_map = nozzle_hard_diameter_map;
             } else if (type == NozzleType::ntStainlessSteel) {
                 diameter_map = nozzle_stainless_diameter_map;
-            } else if (nozzle_type == NozzleType::ntBrass) {
+            } else if (type == NozzleType::ntBrass) {
                 diameter_map = nozzle_brass_diameter_map;
-            } else if (nozzle_type == NozzleType::ntRevoBrass) {
+            } else if (type == NozzleType::ntRevoBrass) {
                 diameter_map = nozzle_revo_brass_diameter_map;
-            } else if (nozzle_type == NozzleType::ntRevoBrassHF) {
+            } else if (type == NozzleType::ntRevoBrassHF) {
                 diameter_map = nozzle_revo_brass_hf_diameter_map;
-            } else if (nozzle_type == NozzleType::ntRevoDiamondback) {
+            } else if (type == NozzleType::ntRevoDiamondback) {
                 diameter_map = nozzle_revo_diamondback_diameter_map;
-            } else if (nozzle_type == NozzleType::ntRevoObxidian) {
+            } else if (type == NozzleType::ntRevoObxidian) {
                 diameter_map = nozzle_revo_obxidian_diameter_map;
-            } else if (nozzle_type == NozzleType::ntRevoObxidianHF) {
+            } else if (type == NozzleType::ntRevoObxidianHF) {
                 diameter_map = nozzle_revo_obxidian_hf_diameter_map;
-            } else if (nozzle_type == NozzleType::ntRevoHTA) {
+            } else if (type == NozzleType::ntRevoHTA) {
                 diameter_map = nozzle_revo_hta_diameter_map;
-            } else if (nozzle_type == NozzleType::ntRevoHighTemp) {
+            } else if (type == NozzleType::ntRevoHighTemp) {
                 diameter_map = nozzle_revo_high_temp_diameter_map;
-            } else if (nozzle_type == NozzleType::ntRevoHFHTA) {
+            } else if (type == NozzleType::ntRevoHFHTA) {
                 diameter_map = nozzle_revo_hf_hta_diameter_map;
             }
 

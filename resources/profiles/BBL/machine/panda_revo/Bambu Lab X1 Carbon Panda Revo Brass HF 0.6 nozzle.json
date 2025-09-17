@@ -1,0 +1,14 @@
+{
+    "type": "machine",
+    "name": "Bambu Lab X1 Carbon Panda Revo Brass HF 0.6 nozzle",
+    "inherits": "Bambu Lab X1 Carbon Panda Revo 0.6 nozzle",
+    "from": "system",
+    "setting_id": "GM0424",
+    "instantiation": "true",
+    "printer_model": "Bambu Lab X1 Carbon Panda Revo Brass HF",
+    "nozzle_type": "revo_brass_hf",
+    "default_filament_profile": [
+        "Bambu PLA Matte @BBL X1C Panda Revo Brass HF 0.6 nozzle"
+    ],
+    "default_print_profile": "0.30mm Standard @BBL X1C Panda Revo Brass 0.6 nozzle"
+}

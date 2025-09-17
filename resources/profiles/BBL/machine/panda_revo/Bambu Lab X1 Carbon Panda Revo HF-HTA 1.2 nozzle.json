@@ -1,0 +1,14 @@
+{
+    "type": "machine",
+    "name": "Bambu Lab X1 Carbon Panda Revo HF-HTA 1.2 nozzle",
+    "inherits": "Bambu Lab X1 Carbon Panda Revo 1.2 nozzle",
+    "from": "system",
+    "setting_id": "GM0487",
+    "instantiation": "true",
+    "printer_model": "Bambu Lab X1 Carbon Panda Revo HF-HTA",
+    "nozzle_type": "revo_hf_hta",
+    "default_filament_profile": [
+        "Bambu PLA Matte @BBL X1C Panda Revo HF-HTA 1.2 nozzle"
+    ],
+    "default_print_profile": "0.50mm Standard @BBL X1C Panda Revo HF-HTA 1.2 nozzle"
+}

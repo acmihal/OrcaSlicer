@@ -1,0 +1,14 @@
+{
+    "type": "machine",
+    "name": "Bambu Lab X1 Carbon Panda Revo Diamondback 0.4 nozzle",
+    "inherits": "Bambu Lab X1 Carbon Panda Revo 0.4 nozzle",
+    "from": "system",
+    "setting_id": "GM0433",
+    "instantiation": "true",
+    "printer_model": "Bambu Lab X1 Carbon Panda Revo Diamondback",
+    "nozzle_type": "revo_diamondback",
+    "default_filament_profile": [
+        "Bambu PLA Matte @BBL X1C Panda Revo Diamondback 0.4 nozzle"
+    ],
+    "default_print_profile": "0.20mm Standard @BBL X1C Panda Revo Diamondback 0.4 nozzle"
+}
