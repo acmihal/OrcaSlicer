@@ -85,8 +85,9 @@ static const std::unordered_map<std::string, std::vector<std::string>> printer_m
                             "Anycubic Kobra 2 Max",  "Anycubic Kobra 2 Pro",  "Anycubic Kobra 2 Neo",  "Anycubic Kobra 3",      "Anycubic Kobra S1"}},
      {"Artillery",         {"Artillery Sidewinder X1",      "Artillery Genius",             "Artillery Genius Pro",         "Artillery Sidewinder X2",      "Artillery Hornet",
                             "Artillery Sidewinder X3 Pro",  "Artillery Sidewinder X3 Plus", "Artillery Sidewinder X4 Pro",  "Artillery Sidewinder X4 Plus"}},
-     {"Bambulab",          {"Bambu Lab X1 Carbon", "Bambu Lab X1",        "Bambu Lab X1E",       "Bambu Lab P1P",       "Bambu Lab P1S",
-                            "Bambu Lab A1 mini",   "Bambu Lab A1"}},
+     {"Bambulab",          {"Bambu Lab X1 Carbon",                             "Bambu Lab X1",                                    "Bambu Lab X1E",                                   "Bambu Lab P1P",                                   "Bambu Lab P1S",
+                            "Bambu Lab A1 mini",                               "Bambu Lab A1",                                    "Bambu Lab X1 Carbon Panda Revo Brass",            "Bambu Lab X1 Carbon Panda Revo Brass HF",         "Bambu Lab X1 Carbon Panda Revo Diamondback",
+                            "Bambu Lab X1 Carbon Panda Revo ObXidian",         "Bambu Lab X1 Carbon Panda Revo ObXidian HF",      "Bambu Lab X1 Carbon Panda Revo HTA",              "Bambu Lab X1 Carbon Panda Revo High Temperature", "Bambu Lab X1 Carbon Panda Revo HF-HTA"}},
      {"BIQU",              {"BIQU B1",      "BIQU BX",      "BIQU Hurakan"}},
      {"Blocks",            {"BLOCKS Pro S100", "BLOCKS RD50 V2",  "BLOCKS RF50"}},
      {"Chuanying",         {"Chuanying X1"}},
@@ -159,10 +160,11 @@ static const std::unordered_map<std::string, std::vector<std::string>> printer_m
      {"Z-Bolt",            {"Z-Bolt S300",      "Z-Bolt S300 Dual", "Z-Bolt S400",      "Z-Bolt S400 Dual", "Z-Bolt S600",
                             "Z-Bolt S600 Dual"}}};
 
-static std::vector<std::string>               nozzle_diameter_vec = {"0.4", "0.15", "0.2", "0.25", "0.3", "0.35", "0.5", "0.6", "0.75", "0.8", "1.0", "1.2"};
+static std::vector<std::string>               nozzle_diameter_vec = {"0.4", "0.15", "0.2", "0.25", "0.3", "0.35", "0.5", "0.6", "0.75", "0.8", "1.0", "1.2", "1.4"};
 static std::unordered_map<std::string, float> nozzle_diameter_map = {{"0.15", 0.15}, {"0.2", 0.2},   {"0.25", 0.25}, {"0.3", 0.3},
                                                                      {"0.35", 0.35}, {"0.4", 0.4},   {"0.5", 0.5},   {"0.6", 0.6},
-                                                                     {"0.75", 0.75}, {"0.8", 0.8},   {"1.0", 1.0},   {"1.2", 1.2}};
+                                                                     {"0.75", 0.75}, {"0.8", 0.8},   {"1.0", 1.0},   {"1.2", 1.2},
+                                                                     {"1.4", 1.4}};
 
 static std::set<int> cannot_input_key = {9, 10, 13, 33, 35, 36, 37, 38, 40, 41, 42, 44, 46, 47, 59, 60, 62, 63, 64, 92, 94, 95, 124, 126};
 
