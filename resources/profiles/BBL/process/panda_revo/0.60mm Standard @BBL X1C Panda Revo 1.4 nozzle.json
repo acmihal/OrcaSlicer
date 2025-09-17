@@ -1,0 +1,14 @@
+{
+    "type": "process",
+    "name": "0.60mm Standard @BBL X1C Panda Revo 1.4 nozzle",
+    "inherits": "fdm_process_single_0.60_nozzle_1.4",
+    "from": "system",
+    "setting_id": "GP448",
+    "instantiation": "true",
+    "description": "It has an enormous layer height, and results in very apparent layer lines, low printing quality and ludicrous fast printing time.",
+    "compatible_printers": [
+        "Bambu Lab X1 Carbon Panda Revo Brass HF 1.4 nozzle",
+        "Bambu Lab X1 Carbon Panda Revo ObXidian HF 1.4 nozzle",
+        "Bambu Lab X1 Carbon Panda Revo HF-HTA 1.4 nozzle"
+    ]
+}

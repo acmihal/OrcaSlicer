@@ -88,8 +88,16 @@
             "sub_path": "process/fdm_process_single_0.08_nozzle_0.2.json"
         },
         {
+            "name": "fdm_process_single_0.10_nozzle_0.15",
+            "sub_path": "process/fdm_process_single_0.10_nozzle_0.15.json"
+        },
+        {
             "name": "fdm_process_single_0.10_nozzle_0.2",
             "sub_path": "process/fdm_process_single_0.10_nozzle_0.2.json"
+        },
+        {
+            "name": "fdm_process_single_0.10_nozzle_0.25",
+            "sub_path": "process/fdm_process_single_0.10_nozzle_0.25.json"
         },
         {
             "name": "fdm_process_single_0.12",
@@ -148,6 +156,10 @@
             "sub_path": "process/fdm_process_single_0.40_nozzle_0.8.json"
         },
         {
+            "name": "fdm_process_single_0.40_nozzle_1.0",
+            "sub_path": "process/fdm_process_single_0.40_nozzle_1.0.json"
+        },
+        {
             "name": "fdm_process_single_0.42_nozzle_0.6",
             "sub_path": "process/fdm_process_single_0.42_nozzle_0.6.json"
         },
@@ -156,8 +168,16 @@
             "sub_path": "process/fdm_process_single_0.48_nozzle_0.8.json"
         },
         {
+            "name": "fdm_process_single_0.50_nozzle_1.2",
+            "sub_path": "process/fdm_process_single_0.50_nozzle_1.2.json"
+        },
+        {
             "name": "fdm_process_single_0.56_nozzle_0.8",
             "sub_path": "process/fdm_process_single_0.56_nozzle_0.8.json"
+        },
+        {
+            "name": "fdm_process_single_0.60_nozzle_1.4",
+            "sub_path": "process/fdm_process_single_0.60_nozzle_1.4.json"
         },
         {
             "name": "0.06mm Fine @BBL A1 0.2 nozzle",
@@ -636,16 +656,36 @@
             "sub_path": "process/0.40mm Standard @BBL A1M 0.8 nozzle.json"
         },
         {
-            "name": "0.20mm Standard @BBL X1CPR 0.4 nozzle",
-            "sub_path": "process/0.20mm Standard @BBL X1CPR 0.4 nozzle.json"
+            "name": "0.10mm Standard @BBL X1C Panda Revo 0.15 nozzle",
+            "sub_path": "process/panda_revo/0.10mm Standard @BBL X1C Panda Revo 0.15 nozzle.json"
         },
         {
-            "name": "0.30mm Standard @BBL X1CPR 0.6 nozzle",
-            "sub_path": "process/0.30mm Standard @BBL X1CPR 0.6 nozzle.json"
+            "name": "0.10mm Standard @BBL X1C Panda Revo 0.25 nozzle",
+            "sub_path": "process/panda_revo/0.10mm Standard @BBL X1C Panda Revo 0.25 nozzle.json"
         },
         {
-            "name": "0.40mm Standard @BBL X1CPR 0.8 nozzle",
-            "sub_path": "process/0.40mm Standard @BBL X1CPR 0.8 nozzle.json"
+            "name": "0.20mm Standard @BBL X1C Panda Revo 0.4 nozzle",
+            "sub_path": "process/panda_revo/0.20mm Standard @BBL X1C Panda Revo 0.4 nozzle.json"
+        },
+        {
+            "name": "0.30mm Standard @BBL X1C Panda Revo 0.6 nozzle",
+            "sub_path": "process/panda_revo/0.30mm Standard @BBL X1C Panda Revo 0.6 nozzle.json"
+        },
+        {
+            "name": "0.40mm Standard @BBL X1C Panda Revo 0.8 nozzle",
+            "sub_path": "process/panda_revo/0.40mm Standard @BBL X1C Panda Revo 0.8 nozzle.json"
+        },
+        {
+            "name": "0.40mm Standard @BBL X1C Panda Revo 1.0 nozzle",
+            "sub_path": "process/panda_revo/0.40mm Standard @BBL X1C Panda Revo 1.0 nozzle.json"
+        },
+        {
+            "name": "0.50mm Standard @BBL X1C Panda Revo 1.2 nozzle",
+            "sub_path": "process/panda_revo/0.50mm Standard @BBL X1C Panda Revo 1.2 nozzle.json"
+        },
+        {
+            "name": "0.60mm Standard @BBL X1C Panda Revo 1.4 nozzle",
+            "sub_path": "process/panda_revo/0.60mm Standard @BBL X1C Panda Revo 1.4 nozzle.json"
         }
     ],
     "filament_list": [

@@ -1,0 +1,15 @@
+{
+    "type": "process",
+    "name": "0.10mm Standard @BBL X1C Panda Revo 0.15 nozzle",
+    "inherits": "fdm_process_single_0.10_nozzle_0.15",
+    "from": "system",
+    "setting_id": "GP441",
+    "instantiation": "true",
+    "description": "It has a small layer height, and results in almost negligible layer lines and high printing quality. It is suitable for most general printing cases.",
+    "elefant_foot_compensation": "0.1",
+    "smooth_coefficient": "150",
+    "overhang_totally_speed": "40",
+    "compatible_printers": [
+        "Bambu Lab X1 Carbon Panda Revo Brass 0.15 nozzle"
+    ]
+}

@@ -1,0 +1,19 @@
+{
+    "type": "process",
+    "name": "0.20mm Standard @BBL X1C Panda Revo 0.4 nozzle",
+    "inherits": "0.20mm Standard @BBL X1C",
+    "from": "system",
+    "setting_id": "GP443",
+    "instantiation": "true",
+    "description": "It has a general layer height, and results in general layer lines and printing quality. It is suitable for most general printing cases.",
+    "compatible_printers": [
+        "Bambu Lab X1 Carbon Panda Revo Brass 0.4 nozzle",
+        "Bambu Lab X1 Carbon Panda Revo Brass HF 0.4 nozzle",
+        "Bambu Lab X1 Carbon Panda Revo Diamondback 0.4 nozzle",
+        "Bambu Lab X1 Carbon Panda Revo ObXidian 0.4 nozzle",
+        "Bambu Lab X1 Carbon Panda Revo ObXidian HF 0.4 nozzle",
+        "Bambu Lab X1 Carbon Panda Revo HTA 0.4 nozzle",
+        "Bambu Lab X1 Carbon Panda Revo High Temperature 0.4 nozzle",
+        "Bambu Lab X1 Carbon Panda Revo HF-HTA 0.4 nozzle"
+    ]
+}
