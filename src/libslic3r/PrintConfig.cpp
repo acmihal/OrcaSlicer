@@ -407,7 +407,15 @@ static t_config_enum_values s_keys_map_NozzleType {
     { "undefine",       int(NozzleType::ntUndefine) },
     { "hardened_steel", int(NozzleType::ntHardenedSteel) },
     { "stainless_steel",int(NozzleType::ntStainlessSteel) },
-    { "brass",          int(NozzleType::ntBrass) }
+    { "brass",          int(NozzleType::ntBrass) },
+    { "revo_brass",     int(NozzleType::ntRevoBrass) },
+    { "revo_brass_hf",  int(NozzleType::ntRevoBrassHF) },
+    { "revo_diamondback", int(NozzleType::ntRevoDiamondback) },
+    { "revo_obxidian",  int(NozzleType::ntRevoObxidian) },
+    { "revo_obxidian_hf", int(NozzleType::ntRevoObxidianHF) },
+    { "revo_hta",       int(NozzleType::ntRevoHTA) },
+    { "revo_high_temp", int(NozzleType::ntRevoHighTemp) },
+    { "revo_hf_hta",    int(NozzleType::ntRevoHFHTA) },
 };
 CONFIG_OPTION_ENUM_DEFINE_STATIC_MAPS(NozzleType)
 
@@ -3003,10 +3011,26 @@ void PrintConfigDef::init_fff_params()
     def->enum_values.push_back("hardened_steel");
     def->enum_values.push_back("stainless_steel");
     def->enum_values.push_back("brass");
+    def->enum_values.push_back("revo_brass");
+    def->enum_values.push_back("revo_brass_hf");
+    def->enum_values.push_back("revo_diamondback");
+    def->enum_values.push_back("revo_obxidian");
+    def->enum_values.push_back("revo_obxidian_hf");
+    def->enum_values.push_back("revo_hta");
+    def->enum_values.push_back("revo_high_temp");
+    def->enum_values.push_back("revo_hf_hta");
     def->enum_labels.push_back(L("Undefine"));
     def->enum_labels.push_back(L("Hardened steel"));
     def->enum_labels.push_back(L("Stainless steel"));
     def->enum_labels.push_back(L("Brass"));
+    def->enum_labels.push_back(L("Revo Brass"));
+    def->enum_labels.push_back(L("Revo Brass HF"));
+    def->enum_labels.push_back(L("Revo Diamondback"));
+    def->enum_labels.push_back(L("Revo ObXidian"));
+    def->enum_labels.push_back(L("Revo ObXidian HF"));
+    def->enum_labels.push_back(L("Revo HTA"));
+    def->enum_labels.push_back(L("Revo High Temperature"));
+    def->enum_labels.push_back(L("Revo HF-HTA"));
     def->mode = comAdvanced;
     def->set_default_value(new ConfigOptionEnum<NozzleType>(ntUndefine));
 

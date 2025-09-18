@@ -85,6 +85,24 @@ static wxString to_wstring_name(std::string name)
         return _L("Hardened Steel");
     } else if (name == "stainless_steel") {
         return _L("Stainless Steel");
+    } else if (name == "brass") {
+        return _L("Brass");
+    } else if (name == "revo_brass") {
+        return _L("Revo Brass");
+    } else if (name == "revo_brass_hf") {
+        return _L("Revo Brass HF");
+    } else if (name == "revo_diamondback") {
+        return _L("Revo Diamondback");
+    } else if (name == "revo_obxidian") {
+        return _L("Revo ObXidian");
+    } else if (name == "revo_obxidian_hf") {
+        return _L("Revo ObXidian HF");
+    } else if (name == "revo_hta") {
+        return _L("Revo HTA");
+    } else if (name == "revo_high_temp") {
+        return _L("Revo High Temperature");
+    } else if (name == "revo_hf_hta") {
+        return _L("Revo HF-HTA");
     }
 
     return wxEmptyString;
