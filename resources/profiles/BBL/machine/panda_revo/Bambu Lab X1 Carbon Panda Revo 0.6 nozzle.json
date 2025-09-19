@@ -5,6 +5,7 @@
     "from": "system",
     "setting_id": "GM0404",
     "instantiation": "false",
+    "printer_model": "Bambu Lab X1 Carbon Panda Revo",
     "printer_variant": "0.6",
     "upward_compatible_machine": [ ],
     "nozzle_diameter": [
