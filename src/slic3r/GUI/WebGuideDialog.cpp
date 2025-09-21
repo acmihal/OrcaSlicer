@@ -908,124 +908,6 @@ bool GuideFrame::run()
         return false;
 }
 
-int GuideFrame::GetFilamentInfo( std::string VendorDirectory, json & pFilaList, std::string filepath, std::string &sVendor, std::string &sType, bool recursive_verbose)
-{
-    const bool verbose = recursive_verbose || (filepath.find("Panda") != std::string::npos);
-    if (verbose) {
-        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM3 VendorDirectory=%1% filepath=%2%") % VendorDirectory % filepath;
-    }
-
-    //GetStardardFilePath(filepath);
-    //BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " GetFilamentInfo:VendorDirectory - " << VendorDirectory << ", Filepath - "<<filepath;
-
-    try {
-        std::string contents;
-        LoadFile(filepath, contents);
-        //BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << ": Json Contents: " << contents;
-        json jLocal = json::parse(contents);
-
-        if (sVendor == "") {
-            if (jLocal.contains("filament_vendor"))
-                sVendor = jLocal["filament_vendor"][0];
-            else {
-                //BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << filepath << " - Not Contains filament_vendor";
-            }
-        }
-
-        if (sType == "") {
-            if (jLocal.contains("filament_type"))
-                sType = jLocal["filament_type"][0];
-            else {
-                //BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << filepath << " - Not Contains filament_type";
-            }
-        }
-
-        if (verbose) {
-            if (sVendor == "") {
-                BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " ACM3 no filament_vendor found";
-            } else {
-                BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM3 filament_vendor=%1%") % sVendor;
-            }
-            if (sType == "") {
-                BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " ACM3 no filament_type found";
-            } else {
-                BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM3 filament_type=%1%") % sType;
-            }
-        }
-
-        if (sVendor == "" || sType == "")
-        {
-            if (jLocal.contains("inherits")) {
-                std::string FName = jLocal["inherits"];
-                if (verbose) {
-                    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM3 checking inherits=%1%") % FName;
-                }
-
-                if (!pFilaList.contains(FName)) {
-                    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << "pFilaList - Not Contains inherits filaments: " << FName;
-                    return -1;
-                }
-
-                std::string FPath = pFilaList[FName]["sub_path"];
-                //BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " Before Format Inherits Path: VendorDirectory - " << VendorDirectory << ", sub_path - " << FPath;
-                wxString strNewFile = wxString::Format("%s%c%s", wxString(VendorDirectory.c_str(), wxConvUTF8), boost::filesystem::path::preferred_separator, FPath);
-                boost::filesystem::path inherits_path(w2s(strNewFile));
-                if (verbose) {
-                    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM3 inherits_path=%1%") % inherits_path;
-                }
-                if (!boost::filesystem::exists(inherits_path)) {
-                    inherits_path = (boost::filesystem::path(m_OrcaFilaLibPath) / boost::filesystem::path(FPath)).make_preferred();
-                    if (verbose) {
-                        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM3 second try inherits_path=%1%") % inherits_path;
-                    }
-                }
-
-                //boost::filesystem::path nf(strNewFile.c_str());
-                if (boost::filesystem::exists(inherits_path)) {
-                    if (verbose) {
-                        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM3 recursing to %1% {") % inherits_path.string();
-                    }
-                    const int result = GetFilamentInfo(VendorDirectory, pFilaList, inherits_path.string(), sVendor, sType, verbose);
-                    if (verbose) {
-                        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM3 recursion result=%1% sVendor=\"%2%\" sType=\"%3%\" }") % result % sVendor % sType;
-                    }
-                    return result;
-                }
-                else {
-                    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " inherits File Not Exist: " << inherits_path;
-                    return -1;
-                }
-            } else {
-                //BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << filepath << " - Not Contains inherits";
-                if (sType == "") {
-                    //BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << "sType is Empty";
-                    return -1;
-                }
-                else {
-                    sVendor = "Generic";
-                    return 0;
-                }
-            }
-        }
-        else {
-            return 0;
-        }
-    }
-    catch(nlohmann::detail::parse_error &err) {
-        BOOST_LOG_TRIVIAL(error) << __FUNCTION__<< ": parse "<<filepath <<" got a nlohmann::detail::parse_error, reason = " << err.what();
-        return -1;
-    }
-    catch (std::exception &e)
-    {
-        // wxLogMessage("GUIDE: load_profile_error  %s ", e.what());
-        // wxMessageBox(e.what(), "", MB_OK);
-        BOOST_LOG_TRIVIAL(error) << __FUNCTION__<< ": parse " << filepath <<" got exception: "<<e.what();
-        return -1;
-    }
-
-    return 0;
-}
-
 int GuideFrame::LoadProfileData()
 {
     try {
@@ -1392,48 +1274,9 @@ int GuideFrame::LoadProfileFamily(std::string vendor_name, std::string file_name
     return 0;
 }
 
-
-void GuideFrame::StrReplace(std::string &strBase, std::string strSrc, std::string strDes)
-{
-    int pos    = 0;
-    int srcLen = strSrc.size();
-    int desLen = strDes.size();
-    pos = strBase.find(strSrc, pos);
-    while ((pos != std::string::npos)) {
-        strBase.replace(pos, srcLen, strDes);
-        pos = strBase.find(strSrc, (pos + desLen));
-    }
-}
-
 std::string GuideFrame::w2s(wxString sSrc)
 {
     return std::string(sSrc.mb_str());
-}
-
-// FIXME ACM delete
-// FIXME ACM search for other dead code
-void GuideFrame::GetStardardFilePath(std::string &FilePath) {
-    StrReplace(FilePath, "\\", w2s(wxString::Format("%c", boost::filesystem::path::preferred_separator)));
-    StrReplace(FilePath, "/" , w2s(wxString::Format("%c", boost::filesystem::path::preferred_separator)));
-}
-
-// FIXME ACM this can be deleted
-bool GuideFrame::LoadFile(std::string jPath, std::string &sContent)
-{
-    try {
-        boost::nowide::ifstream t(jPath);
-        std::stringstream buffer;
-        buffer << t.rdbuf();
-        sContent=buffer.str();
-        BOOST_LOG_TRIVIAL(trace) << __FUNCTION__ << boost::format(", load %1% into buffer")% jPath;
-    }
-    catch (std::exception &e)
-    {
-        BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << ",  got exception: "<<e.what();
-        return false;
-    }
-
-    return true;
 }
 
 int GuideFrame::DownloadPlugin()
@@ -1460,7 +1303,5 @@ int GuideFrame::ShowPluginStatus(int status, int percent, bool& cancel)
     //TODO
     return 0;
 }
-
-
 
 }} // namespace Slic3r::GUI
