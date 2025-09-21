@@ -10,6 +10,7 @@
 #include "libslic3r/PresetBundle.hpp"
 #include "slic3r/GUI/wxExtensions.hpp"
 #include "slic3r/GUI/GUI_App.hpp"
+#include "slic3r/GUI/ProfileCache.hpp"
 #include "libslic3r_version.h"
 
 #include <wx/sizer.h>
@@ -635,6 +636,9 @@ int GuideFrame::SaveProfile()
     for (auto it = m_ProfileJson["filament"].begin(); it != m_ProfileJson["filament"].end(); ++it) {
         if (it.value()["selected"] == 1){
             section_new[it.key()] = "true";
+            BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM set filament to appconfig filament=%1%") % it.key();
+        } else {
+            BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM filament=%1% not selected in appconfig") % it.key();
         }
     }
     m_appconfig_new.set_section(section_name, section_new);
@@ -904,22 +908,27 @@ bool GuideFrame::run()
         return false;
 }
 
-int GuideFrame::GetFilamentInfo( std::string VendorDirectory, json & pFilaList, std::string filepath, std::string &sVendor, std::string &sType)
+int GuideFrame::GetFilamentInfo( std::string VendorDirectory, json & pFilaList, std::string filepath, std::string &sVendor, std::string &sType, bool recursive_verbose)
 {
+    const bool verbose = recursive_verbose || (filepath.find("Panda") != std::string::npos);
+    if (verbose) {
+        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM3 VendorDirectory=%1% filepath=%2%") % VendorDirectory % filepath;
+    }
+
     //GetStardardFilePath(filepath);
-    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " GetFilamentInfo:VendorDirectory - " << VendorDirectory << ", Filepath - "<<filepath;
+    //BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " GetFilamentInfo:VendorDirectory - " << VendorDirectory << ", Filepath - "<<filepath;
 
     try {
         std::string contents;
         LoadFile(filepath, contents);
-        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << ": Json Contents: " << contents;
+        //BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << ": Json Contents: " << contents;
         json jLocal = json::parse(contents);
 
         if (sVendor == "") {
             if (jLocal.contains("filament_vendor"))
                 sVendor = jLocal["filament_vendor"][0];
             else {
-                BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << filepath << " - Not Contains filament_vendor";
+                //BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << filepath << " - Not Contains filament_vendor";
             }
         }
 
@@ -927,7 +936,20 @@ int GuideFrame::GetFilamentInfo( std::string VendorDirectory, json & pFilaList, 
             if (jLocal.contains("filament_type"))
                 sType = jLocal["filament_type"][0];
             else {
-                BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << filepath << " - Not Contains filament_type";
+                //BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << filepath << " - Not Contains filament_type";
+            }
+        }
+
+        if (verbose) {
+            if (sVendor == "") {
+                BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " ACM3 no filament_vendor found";
+            } else {
+                BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM3 filament_vendor=%1%") % sVendor;
+            }
+            if (sType == "") {
+                BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " ACM3 no filament_type found";
+            } else {
+                BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM3 filament_type=%1%") % sType;
             }
         }
 
@@ -935,6 +957,9 @@ int GuideFrame::GetFilamentInfo( std::string VendorDirectory, json & pFilaList, 
         {
             if (jLocal.contains("inherits")) {
                 std::string FName = jLocal["inherits"];
+                if (verbose) {
+                    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM3 checking inherits=%1%") % FName;
+                }
 
                 if (!pFilaList.contains(FName)) {
                     BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << "pFilaList - Not Contains inherits filaments: " << FName;
@@ -942,32 +967,49 @@ int GuideFrame::GetFilamentInfo( std::string VendorDirectory, json & pFilaList, 
                 }
 
                 std::string FPath = pFilaList[FName]["sub_path"];
-                BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " Before Format Inherits Path: VendorDirectory - " << VendorDirectory << ", sub_path - " << FPath;
+                //BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " Before Format Inherits Path: VendorDirectory - " << VendorDirectory << ", sub_path - " << FPath;
                 wxString strNewFile = wxString::Format("%s%c%s", wxString(VendorDirectory.c_str(), wxConvUTF8), boost::filesystem::path::preferred_separator, FPath);
                 boost::filesystem::path inherits_path(w2s(strNewFile));
-                if (!boost::filesystem::exists(inherits_path))
+                if (verbose) {
+                    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM3 inherits_path=%1%") % inherits_path;
+                }
+                if (!boost::filesystem::exists(inherits_path)) {
                     inherits_path = (boost::filesystem::path(m_OrcaFilaLibPath) / boost::filesystem::path(FPath)).make_preferred();
+                    if (verbose) {
+                        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM3 second try inherits_path=%1%") % inherits_path;
+                    }
+                }
 
                 //boost::filesystem::path nf(strNewFile.c_str());
-                if (boost::filesystem::exists(inherits_path))
-                    return GetFilamentInfo(VendorDirectory,pFilaList, inherits_path.string(), sVendor, sType);
+                if (boost::filesystem::exists(inherits_path)) {
+                    if (verbose) {
+                        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM3 recursing to %1% {") % inherits_path.string();
+                    }
+                    const int result = GetFilamentInfo(VendorDirectory, pFilaList, inherits_path.string(), sVendor, sType, verbose);
+                    if (verbose) {
+                        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM3 recursion result=%1% sVendor=\"%2%\" sType=\"%3%\" }") % result % sVendor % sType;
+                    }
+                    return result;
+                }
                 else {
                     BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " inherits File Not Exist: " << inherits_path;
                     return -1;
                 }
             } else {
-                BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << filepath << " - Not Contains inherits";
+                //BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << filepath << " - Not Contains inherits";
                 if (sType == "") {
-                    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << "sType is Empty";
+                    //BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << "sType is Empty";
                     return -1;
                 }
-                else
+                else {
                     sVendor = "Generic";
                     return 0;
+                }
             }
         }
-        else
+        else {
             return 0;
+        }
     }
     catch(nlohmann::detail::parse_error &err) {
         BOOST_LOG_TRIVIAL(error) << __FUNCTION__<< ": parse "<<filepath <<" got a nlohmann::detail::parse_error, reason = " << err.what();
@@ -1171,29 +1213,78 @@ void StringReplace(string &strBase, string strSrc, string strDes)
 }
 
 
-int GuideFrame::LoadProfileFamily(std::string strVendor, std::string strFilePath)
+int GuideFrame::LoadProfileFamily(std::string vendor_name, std::string file_name)
 {
-    // wxString strFolder = strFilePath.BeforeLast(boost::filesystem::path::preferred_separator);
-    boost::filesystem::path file_path(strFilePath);
-    boost::filesystem::path vendor_dir = boost::filesystem::absolute(file_path.parent_path() / strVendor).make_preferred();
-    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(",  vendor path %1%.") % vendor_dir.string();
-    try {
-        // wxLogMessage("GUIDE: json_path1  %s", w2s(strFilePath));
+    using ProfileCache::Get;
+    using ProfileCache::Copy;
+    using ProfileCache::CopyIndex;
+    using ProfileCache::CopyIndexWithDefault;
 
-        std::string contents;
-        LoadFile(strFilePath, contents);
-        // wxLogMessage("GUIDE: json_path1 content: %s", contents);
-        json jLocal = json::parse(contents);
-        // wxLogMessage("GUIDE: json_path1 Loaded");
+    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(": vendor=%1% file=%2%") % vendor_name % file_name;
 
-        // BBS:models
-        json pmodels = jLocal["machine_model_list"];
-        int  nsize   = pmodels.size();
+    // profile family json file full path, e.g. AppData/.../system/BBL.json
+    boost::filesystem::path file_path(file_name);
 
-        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(",  got %1% machine models") % nsize;
+    // just the json filename, e.g. BBL.json
+    boost::filesystem::path vendor_profile_path = file_path.filename();
 
-        for (int n = 0; n < nsize; n++) {
-            json OneModel = pmodels.at(n);
+    // system directory, e.g. AppData/.../system/
+    boost::filesystem::path system_dir = boost::filesystem::absolute(file_path.parent_path()).make_preferred();
+
+    // system name, e.g. system
+    std::string system_name = system_dir.filename().string();
+
+    // Vendor subdirectory, e.g. AppData/.../system/BBL
+    boost::filesystem::path vendor_dir = boost::filesystem::absolute(system_dir / vendor_name).make_preferred();
+
+    json pModels;
+    json pMachine;
+    json pFilament;
+    json pProcess;
+    bool result = Get(system_name, system_dir,
+                      vendor_name, vendor_profile_path, 
+                      Copy("machine_model_list", pModels),
+                      Copy("machine_list", pMachine),
+                      Copy("filament_list", pFilament),
+                      Copy("process_list", pProcess));
+    if (!result) {
+        BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": vendor profile %1% is missing machine_model_list, machine_list, filament_list and/or process_list sections.") % strFilePath;
+        return -1;
+    }
+    
+    //BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(",  vendor path %1%.") % vendor_dir.string();
+    //try {
+    //    std::string contents;
+    //    LoadFile(strFilePath, contents);
+    //    json jLocal = json::parse(contents);
+
+    //    // FIXME ACM normal version of get wants to open json at vendor_path / profile_path
+    //    // FIXME ACM this opens json at strFilePath
+    //    // could use vendor=system
+    //    // vendor_path = AppData/.../system
+    //    // profile_path = BBL.json
+    //    json pModels;
+    //    json pMachine;
+    //    json pFilament;
+    //    json pProcess;
+    //    //bool result = ProfileCache::get(strVendor, jLocal, std::make_pair("machine_model_list", std::ref(pModels)),
+    //    //                                                   std::make_pair("machine_list", std::ref(pMachine)),
+    //    //                                                   std::make_pair("filament_list", std::ref(pFilament)),
+    //    //                                                   std::make_pair("process_list", std::ref(pProcess)));
+    //    bool result = ProfileCache::get(strVendor, jLocal,
+    //                                    ProfileCache::Copy("machine_model_list", pModels),
+    //                                    ProfileCache::Copy("machine_list", pMachine),
+    //                                    ProfileCache::Copy("filament_list", pFilament),
+    //                                    ProfileCache::Copy("process_list", pProcess));
+    //    if (!result) {
+    //        BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": vendor profile %1% is missing machine_model_list, machine_list, filament_list and/or process_list sections.") % strFilePath;
+    //        return -1;
+    //    }
+
+        // Collect all machine_models.
+        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(": vendor %1% has %2% machine_models") % strVendor % pModels.size();
+        for (int n = 0; n < pModels.size(); n++) {
+            json OneModel = pModels.at(n);
 
             OneModel["model"] = OneModel["name"];
             OneModel.erase("name");
@@ -1201,71 +1292,127 @@ int GuideFrame::LoadProfileFamily(std::string strVendor, std::string strFilePath
             std::string s1 = OneModel["model"];
             std::string s2 = OneModel["sub_path"];
 
-            boost::filesystem::path sub_path = boost::filesystem::absolute(vendor_dir / s2).make_preferred();
-            if (!boost::filesystem::exists(sub_path)) continue;
+            std::string strName;
+            std::string strNozzleDiameter;
+            std::string strDefaultMaterials;
+            result = ProfileCache::get(strVendor, vendor_dir, s1, s2,
+                                       //std::make_pair("name", std::ref(strName)),
+                                       //std::make_pair("nozzle_diameter", std::ref(strNozzleDiameter)),
+                                       //std::make_pair("default_materials", std::ref(strDefaultMaterials)));
+                                       ProfileCache::Copy("name", strName),
+                                       ProfileCache::Copy("nozzle_diameter", strNozzleDiameter),
+                                       ProfileCache::Copy("default_materials", strDefaultMaterials));
 
-            std::string             sub_file = sub_path.string();
-
-            // wxLogMessage("GUIDE: json_path2  %s", w2s(ModelFilePath));
-            LoadFile(sub_file, contents);
-            // wxLogMessage("GUIDE: json_path2 content: %s", contents);
-            json pm = json::parse(contents);
-            // wxLogMessage("GUIDE: json_path2  loaded");
-
-            OneModel["name"]      = pm["name"];
-            OneModel["vendor"]    = strVendor;
-            std::string NozzleOpt = pm["nozzle_diameter"];
-            StringReplace(NozzleOpt, " ", "");
-            OneModel["nozzle_diameter"] = NozzleOpt;
-            OneModel["materials"]       = pm["default_materials"];
-
-            // wxString strCoverPath = wxString::Format("%s\\%s\\%s_cover.png", strFolder, strVendor, std::string(s1.mb_str()));
-            std::string             cover_file = s1 + "_cover.png";
-            boost::filesystem::path cover_path = boost::filesystem::absolute(boost::filesystem::path(resources_dir()) / "/profiles/" / strVendor / cover_file).make_preferred();
-            if (!boost::filesystem::exists(cover_path)) {
-                cover_path =
-                    (boost::filesystem::absolute(boost::filesystem::path(resources_dir()) / "/web/image/printer/") /
-                     cover_file)
-                        .make_preferred();
-            }
-            OneModel["cover"]                  = cover_path.string();
-
+            OneModel["name"] = strName;
+            OneModel["vendor"] = strVendor;
+            StringReplace(strNozzleDiameter, " ", "");
+            OneModel["nozzle_diameter"] = strNozzleDiameter;
+            OneModel["materials"] = strDefaultMaterials;
             OneModel["nozzle_selected"] = "";
 
+            std::string cover_file = s1 + "_cover.png";
+            boost::filesystem::path cover_path = boost::filesystem::absolute(boost::filesystem::path(resources_dir()) / "/profiles/" / strVendor / cover_file).make_preferred();
+            if (!boost::filesystem::exists(cover_path)) {
+                cover_path = (boost::filesystem::absolute(boost::filesystem::path(resources_dir()) / "/web/image/printer/") / cover_file).make_preferred();
+            }
+            OneModel["cover"] = cover_path.string();
+
             m_ProfileJson["model"].push_back(OneModel);
+            BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(": machine_model %1%") % s1;
         }
 
-        // BBS:Machine
-        json pmachine = jLocal["machine_list"];
-        nsize         = pmachine.size();
-        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(",  got %1% machines") % nsize;
-        for (int n = 0; n < nsize; n++) {
-            json OneMachine = pmachine.at(n);
+        // Collect instantiation=true machine profiles.
+        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(": vendor %1% has %2% machines") % strVendor % pMachine.size();
+        for (int n = 0; n < pMachine.size(); n++) {
+            json OneMachine = pMachine.at(n);
 
             std::string s1 = OneMachine["name"];
             std::string s2 = OneMachine["sub_path"];
 
-            // wxString ModelFilePath = wxString::Format("%s\\%s\\%s", strFolder, strVendor, s2);
-            boost::filesystem::path sub_path = boost::filesystem::absolute(vendor_dir / s2).make_preferred();
-            if (!boost::filesystem::exists(sub_path)) continue;
+            std::string strInstantiation;
+            std::string strPrinterModel;
+            std::string strNozzleDiameter0;
+            result = ProfileCache::get(strVendor, vendor_dir, s1, s2,
+                                       //std::make_pair("instantiation", std::ref(strInstantiation)),
+                                       //std::make_pair("printer_model", std::ref(strPrinterModel)),
+                                       //std::make_tuple("nozzle_diameter", 0, std::ref(strNozzleDiameter0)));
+                                       ProfileCache::Copy("instantiation", strInstantiation),
+                                       ProfileCache::Copy("printer_model", strPrinterModel),
+                                       ProfileCache::CopyIndex("nozzle_diameter", 0, strNozzleDiameter0));
 
-            std::string             sub_file = sub_path.string();
-            LoadFile(sub_file, contents);
-            json pm = json::parse(contents);
-
-            std::string strInstant = pm["instantiation"];
-            if (strInstant.compare("true") == 0) {
-                OneMachine["model"] = pm["printer_model"];
-                OneMachine["nozzle"] = pm["nozzle_diameter"][0];
-
-                m_ProfileJson["machine"][s1]=OneMachine;
+            if (strInstantiation.compare("true") == 0) {
+                if (!result) {
+                    BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": machine profile %1% is missing printer_model and/or nozzle_diameter.") % (vendor_dir / s2);
+                    return -1;
+                }
+                OneMachine["model"] = strPrinterModel;
+                OneMachine["nozzle"] = strNozzleDiameter0;
+                m_ProfileJson["machine"][s1] = OneMachine;
+                BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(": machine %1% model=%2% nozzle=%3%") % s1 % strPrinterModel % strNozzleDiameter0;
             }
         }
 
+        // Collect instantiation=true filament profiles.
+        //"instantiation"
+        //"filament_vendor"[0] (default "Generic")
+        //"filament_type"[0]
+        //"compatible_printers" vector<str>
+        //    check if the compatible_printer strings are in m_ProfileJson[machine]
+        //    if so get m_ProfileJson[machine][compatible_printer][model and nozzle]
+        //    creates ModelList in kinda a strange way
+        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(": vendor %1% has %2% filaments") % strVendor % pFilament.size();
+        for (int n = 0; n < pFilament.size(); n++) {
+            json OneFF = pFilament.at(n);
+
+            std::string s1 = OneFF["name"];
+            std::string s2 = OneFF["sub_path"];
+
+            // FIXME ACM ProfileCache::get should now flag this as an error if the vendor profile family has two filament profiles with the same name but different sub_paths.
+            //if (m_ProfileJson["filament"].contains(s1)) {
+            //    // Vendor profile family already contains a filament with this name.
+            //    continue;
+            //}
+
+            std::string strInstantiation;
+            std::string strFilamentVendor;
+            std::string strFilamentType;
+            std::vector<std::string> vecCompatiblePrinters;
+            result = ProfileCache::get(strVendor, vendor_dir, s1, s2,
+                                       //std::make_pair("instantiation", std::ref(strInstantiation)),
+                                       //std::make_tuple("filament_vendor", 0, std::ref(strFilamentVendor), "Generic"), // FIXME ACM how to get default?
+                                       //std::make_tuple("filament_type", 0, std::ref(strFilamentType)),
+                                       //std::make_pair("compatible_printers", std::ref(vecCompatiblePrinters))); // FIXME ACM this might need to use get_to(vector ref)
+                                       ProfileCache::Copy("instantiation", strInstantiation),
+                                       ProfileCache::CopyIndexWithDefault("filament_vendor", 0, strFilamentVendor, "Generic"),
+                                       ProfileCache::CopyIndex("filament_type", 0, strFilamentType),
+                                       ProfileCache::Copy("compatible_printers", vecCompatiblePrinters));
+
+            if (strInstantiation.compare("true") == 0) {
+                if (!result) {
+                    BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": filament profile %1% is missing filament_type and/or compatible_printers.") % (vendor_dir / s2);
+                    return -1;
+                }
+
+                OneFF["vendor"] = strFilamentVendor;
+                OneFF["type"] = strFilamentType;
+                OneFF["selected"] = 0;
+                OneFF["models"]   = ""; // FIXME ACM populate models string
+                m_ProfileJson["filament"][s1] = OneFF;
+            }
+        }
+
+
+
+
+
+
+
+
+
+
         // BBS:Filament
-        json pFilament = jLocal["filament_list"];
-        json tFilaList = m_OrcaFilaList;
-        nsize          = pFilament.size();
+        json tFilaList = m_OrcaFilaList; // FIXME ACM this can go away - only used for inheritance in GetFilamentInfo
+        int nsize          = pFilament.size();
 
         for (int n = 0; n < nsize; n++) {
             json OneFF = pFilament.at(n);
@@ -1274,13 +1421,9 @@ int GuideFrame::LoadProfileFamily(std::string strVendor, std::string strFilePath
             std::string s2    = OneFF["sub_path"];
 
             tFilaList[s1] = OneFF;
-            BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << "Vendor: " << strVendor <<", tFilaList Add: " << s1;
+            BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " Vendor: " << strVendor <<", tFilaList Add: " << s1;
         }
 
-        int nFalse  = 0;
-        int nModel  = 0;
-        int nFinish = 0;
-        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(",  got %1% filaments") % nsize;
         for (int n = 0; n < nsize; n++) {
             json OneFF = pFilament.at(n);
 
@@ -1288,86 +1431,109 @@ int GuideFrame::LoadProfileFamily(std::string strVendor, std::string strFilePath
             std::string s2 = OneFF["sub_path"];
 
             if (!m_ProfileJson["filament"].contains(s1)) {
-                // wxString ModelFilePath = wxString::Format("%s\\%s\\%s", strFolder, strVendor, s2);
                 boost::filesystem::path sub_path = boost::filesystem::absolute(vendor_dir / s2).make_preferred();
-                if (!boost::filesystem::exists(sub_path)) continue;
+                if (!boost::filesystem::exists(sub_path)) {
+                    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM2 skip !sub_path name=%1% sub_path=%2%") % s1 % sub_path;
+                    continue;
+                }
 
-                std::string             sub_file = sub_path.string();
+                std::string sub_file = sub_path.string();
                 LoadFile(sub_file, contents);
-                json pm = json::parse(contents);
+                try {
+                    json pm = json::parse(contents);
 
-                std::string strInstant = pm["instantiation"];
-                BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << "Load Filament:" << s1 << ",Path:" << sub_file << ",instantiation?" << strInstant;
+                    std::string strInstant = pm["instantiation"];
 
-                if (strInstant == "true") {
-                    std::string sV;
-                    std::string sT;
+                    if (strInstant == "true") {
+                        std::string sV;
+                        std::string sT;
 
-                    int nRet = GetFilamentInfo(vendor_dir.string(),tFilaList, sub_file, sV, sT);
-                    if (nRet != 0) {
-                        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << "Load Filament:" << s1 << ",GetFilamentInfo Failed, Vendor:" << sV << ",Type:"<< sT;
+                        int nRet = GetFilamentInfo(vendor_dir.string(),tFilaList, sub_file, sV, sT);
+                        if (nRet != 0) {
+                            BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " Load Filament:" << s1 << ", GetFilamentInfo Failed, Vendor:" << sV << ",Type:"<< sT;
+                            continue;
+                        }
+
+                        OneFF["vendor"] = sV;
+                        OneFF["type"]   = sT;
+
+                        OneFF["models"]   = "";
+
+                        int nPrinter = -1;
+                        std::string ModelList = "";
+                        if (pm.contains("compatible_printers")) {
+                            json pPrinters = pm["compatible_printers"];
+                            nPrinter = pPrinters.size();
+                            for (int i = 0; i < nPrinter; i++) {
+                                std::string sP = pPrinters.at(i);
+                                if (m_ProfileJson["machine"].contains(sP)) {
+                                    try {
+                                        std::string mModel = m_ProfileJson["machine"][sP]["model"];
+                                        std::string mNozzle = m_ProfileJson["machine"][sP]["nozzle"];
+                                        std::string NewModel = mModel + "++" + mNozzle;
+                                        ModelList = (boost::format("%1%[%2%]") % ModelList % NewModel).str();
+                                    } catch (std::exception &e) {
+                                        BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << " ACM4 exception listing compatible printers:";
+                                        BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << "    sP=" << sP;
+                                        json mpsp = m_ProfileJson["machine"][sP];
+                                        if (mpsp.contains("model")) {
+                                            BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << "    model=" << mpsp["model"];
+                                        } else {
+                                            BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << "    !contains model";
+                                        }
+                                        if (mpsp.contains("nozzle")) {
+                                            BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << "    nozzle=" << mpsp["nozzle"];
+                                        } else {
+                                            BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << "    !contains nozzle";
+                                        }
+                                        BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << "    m_ProfileJson[machine][sP]=" << m_ProfileJson["machine"][sP];
+                                    }
+                                }
+                            }
+                        }
+
+                        OneFF["models"]    = ModelList;
+                        OneFF["selected"] = 0;
+
+                        m_ProfileJson["filament"][s1] = OneFF;
+                        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM2 added filament to json name=%1% vendor=%2% type=%3% nPrinter=%4%") % s1 % sV % sT % nPrinter;
+                    } else {
+                        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM2 skip !instantiation name=%1%") % s1;
                         continue;
                     }
-
-                    OneFF["vendor"] = sV;
-                    OneFF["type"]   = sT;
-
-                    OneFF["models"]   = "";
-
-                    json pPrinters = pm["compatible_printers"];
-                    int nPrinter   = pPrinters.size();
-                    std::string ModelList = "";
-                    for (int i = 0; i < nPrinter; i++)
-                    {
-                        std::string sP = pPrinters.at(i);
-                        if (m_ProfileJson["machine"].contains(sP))
-                        {
-                            std::string mModel = m_ProfileJson["machine"][sP]["model"];
-                            std::string mNozzle = m_ProfileJson["machine"][sP]["nozzle"];
-                            std::string NewModel = mModel + "++" + mNozzle;
-
-                            ModelList = (boost::format("%1%[%2%]") % ModelList % NewModel).str();
-                        }
-                    }
-
-                    OneFF["models"]    = ModelList;
-                    OneFF["selected"] = 0;
-
-                    m_ProfileJson["filament"][s1] = OneFF;
-                } else
-                    continue;
-
+                }
+                catch (std::exception &e) {
+                    BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << ": ACM2 parse " << sub_file << " got exception: " << e.what();
+                }
+            } else {
+                BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM2 skip already in json name=%1%") % s1;
             }
         }
         if(strVendor == PresetBundle::ORCA_FILAMENT_LIBRARY)
             m_OrcaFilaList = tFilaList;
 
-        // process
-        json pProcess = jLocal["process_list"];
-        nsize         = pProcess.size();
-        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(",  got %1% processes") % nsize;
-        for (int n = 0; n < nsize; n++) {
+        // Collect instantiation=true process profiles.
+        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(": vendor %1% has %2% processes") % strVendor % pProcess.size();
+        for (int n = 0; n < pProcess.size(); n++) {
             json OneProcess = pProcess.at(n);
 
+            std::string s1 = OneProcess["name"];
             std::string s2 = OneProcess["sub_path"];
-            // wxString ModelFilePath = wxString::Format("%s\\%s\\%s", strFolder, strVendor, s2);
-            boost::filesystem::path sub_path = boost::filesystem::absolute(vendor_dir / s2).make_preferred();
-            if (!boost::filesystem::exists(sub_path)) continue;
 
-            std::string             sub_file = sub_path.string();
-            LoadFile(sub_file, contents);
-            json pm = json::parse(contents);
+            std::string strInstantiation;
+            //result = ProfileCache::get(strVendor, vendor_dir, s1, s2, std::make_pair("instantiation", std::ref(strInstantiation)));
+            result = ProfileCache::get(strVendor, vendor_dir, s1, s2, ProfileCache::Copy("instantiation", strInstantiation));
 
-            std::string bInstall = pm["instantiation"];
-            if (bInstall == "true") { m_ProfileJson["process"].push_back(OneProcess); }
+            if (strInstantiation.compare("true") == 0) {
+                m_ProfileJson["process"].push_back(OneProcess);
+                BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(": process %1%") % s1;
+            }
         }
 
     } catch (nlohmann::detail::parse_error &err) {
         BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << ": parse " << strFilePath << " got a nlohmann::detail::parse_error, reason = " << err.what();
         return -1;
     } catch (std::exception &e) {
-        // wxMessageBox(e.what(), "", MB_OK);
-        // wxLogMessage("GUIDE: LoadFamily Error: %s", e.what());
         BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << ": parse " << strFilePath << " got exception: " << e.what();
         return -1;
     }
@@ -1393,11 +1559,14 @@ std::string GuideFrame::w2s(wxString sSrc)
     return std::string(sSrc.mb_str());
 }
 
+// FIXME ACM delete
+// FIXME ACM search for other dead code
 void GuideFrame::GetStardardFilePath(std::string &FilePath) {
     StrReplace(FilePath, "\\", w2s(wxString::Format("%c", boost::filesystem::path::preferred_separator)));
     StrReplace(FilePath, "/" , w2s(wxString::Format("%c", boost::filesystem::path::preferred_separator)));
 }
 
+// FIXME ACM this can be deleted
 bool GuideFrame::LoadFile(std::string jPath, std::string &sContent)
 {
     try {
