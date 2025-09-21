@@ -102,7 +102,7 @@ protected:
 template <typename T>
 class Copy {
 public:
-    typedef value_type = T;
+    typedef T value_type;
     Copy(std::string key, T& dest) : _key(key), _dest(dest) { }
     std::string key() const { return _key; }
     void store(json j) { j.get_to(_dest); }
@@ -126,7 +126,7 @@ public:
     CopyIndex(std::string key, int index, T& dest) : Copy(key, dest), _index(index) { }
     void store(json j) {
         if (!j.is_array()) {
-            throw std::runtime_error(std::string("key ") + _key + " is expected to be an array but is actually " + j.value_type());
+            throw std::runtime_error(std::string("key ") + _key + " is expected to be an array but is actually " + j.type_name());
         }
         Copy::store(j[_index]);
     }
@@ -138,7 +138,8 @@ template <typename T>
 class CopyIndexWithDefault : public CopyIndex<T>, public CopyWithDefault<T> {
 public:
     using CopyIndex::store;
-    CopyIndexWithDefault(std::string key, int index, T& dest, const T& default_value) : CopyIndex(key, index, dest), CopyWithDefault(key, dest, default_value) { }
+    CopyIndexWithDefault(std::string key, int index, T& dest, const T& default_value)
+        : Copy(key, dest), CopyIndex(key, index, dest), CopyWithDefault(key, dest, default_value) { }
 };
 
 namespace {
@@ -157,20 +158,7 @@ template <typename Head, typename... Tail>
 bool Get(const std::string vendor_name, const json& j, Head key_dest, Tail... tail) {
     if (j.contains(key_dest.key())) {
         // The expected key is in the json.
-        key_dest.store(j);
-        //if constexpr (std::tuple_size<Head>::value == 2) {
-        //    // key_dest is a pair with the key name and the destination reference.
-        //    std::get<1>(key_dest) = j[std::get<0>(key_dest)];
-        //}
-        //else if constexpr (std::tuple_size<Head>::value == 3) {
-        //    // key_dest is a tuple with the key name, index, and destination reference.
-        //    // The key should point to a json array.
-        //    const json value = j[std::get<0>(key_dest)];
-        //    if (!value.is_array()) {
-        //        throw std::runtime_error(std::string("key ") + std::get<0>(key_dest) + " is expected to be an array but is actually " + value.type_name());
-        //    }
-        //    std::get<2>(key_dest) = value[std::get<1>(key_dest)];
-        //}
+        key_dest.store(j[key_dest.key()]);
     }
     else if (j.contains("inherits")) {
         // The expected key is not in the json, but might come from inheritance.

@@ -1247,295 +1247,146 @@ int GuideFrame::LoadProfileFamily(std::string vendor_name, std::string file_name
                       Copy("machine_list", pMachine),
                       Copy("filament_list", pFilament),
                       Copy("process_list", pProcess));
+
     if (!result) {
-        BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": vendor profile %1% is missing machine_model_list, machine_list, filament_list and/or process_list sections.") % strFilePath;
+        BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": vendor profile %1% is missing machine_model_list, machine_list, filament_list and/or process_list.") % file_name;
         return -1;
     }
     
-    //BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(",  vendor path %1%.") % vendor_dir.string();
-    //try {
-    //    std::string contents;
-    //    LoadFile(strFilePath, contents);
-    //    json jLocal = json::parse(contents);
+    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(": vendor %1% has %2% machine_models") % vendor_name % pModels.size();
+    for (int n = 0; n < pModels.size(); n++) {
+        json OneModel = pModels.at(n);
 
-    //    // FIXME ACM normal version of get wants to open json at vendor_path / profile_path
-    //    // FIXME ACM this opens json at strFilePath
-    //    // could use vendor=system
-    //    // vendor_path = AppData/.../system
-    //    // profile_path = BBL.json
-    //    json pModels;
-    //    json pMachine;
-    //    json pFilament;
-    //    json pProcess;
-    //    //bool result = ProfileCache::get(strVendor, jLocal, std::make_pair("machine_model_list", std::ref(pModels)),
-    //    //                                                   std::make_pair("machine_list", std::ref(pMachine)),
-    //    //                                                   std::make_pair("filament_list", std::ref(pFilament)),
-    //    //                                                   std::make_pair("process_list", std::ref(pProcess)));
-    //    bool result = ProfileCache::get(strVendor, jLocal,
-    //                                    ProfileCache::Copy("machine_model_list", pModels),
-    //                                    ProfileCache::Copy("machine_list", pMachine),
-    //                                    ProfileCache::Copy("filament_list", pFilament),
-    //                                    ProfileCache::Copy("process_list", pProcess));
-    //    if (!result) {
-    //        BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": vendor profile %1% is missing machine_model_list, machine_list, filament_list and/or process_list sections.") % strFilePath;
-    //        return -1;
-    //    }
+        OneModel["model"] = OneModel["name"];
+        OneModel.erase("name");
 
-        // Collect all machine_models.
-        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(": vendor %1% has %2% machine_models") % strVendor % pModels.size();
-        for (int n = 0; n < pModels.size(); n++) {
-            json OneModel = pModels.at(n);
+        std::string profile_name = OneModel["model"];
+        std::string profile_path = OneModel["sub_path"];
 
-            OneModel["model"] = OneModel["name"];
-            OneModel.erase("name");
+        std::string strName;
+        std::string strNozzleDiameter;
+        std::string strDefaultMaterials;
+        result = Get(vendor_name, vendor_dir, profile_name, profile_path,
+                     Copy("name", strName),
+                     Copy("nozzle_diameter", strNozzleDiameter),
+                     Copy("default_materials", strDefaultMaterials));
 
-            std::string s1 = OneModel["model"];
-            std::string s2 = OneModel["sub_path"];
-
-            std::string strName;
-            std::string strNozzleDiameter;
-            std::string strDefaultMaterials;
-            result = ProfileCache::get(strVendor, vendor_dir, s1, s2,
-                                       //std::make_pair("name", std::ref(strName)),
-                                       //std::make_pair("nozzle_diameter", std::ref(strNozzleDiameter)),
-                                       //std::make_pair("default_materials", std::ref(strDefaultMaterials)));
-                                       ProfileCache::Copy("name", strName),
-                                       ProfileCache::Copy("nozzle_diameter", strNozzleDiameter),
-                                       ProfileCache::Copy("default_materials", strDefaultMaterials));
-
-            OneModel["name"] = strName;
-            OneModel["vendor"] = strVendor;
-            StringReplace(strNozzleDiameter, " ", "");
-            OneModel["nozzle_diameter"] = strNozzleDiameter;
-            OneModel["materials"] = strDefaultMaterials;
-            OneModel["nozzle_selected"] = "";
-
-            std::string cover_file = s1 + "_cover.png";
-            boost::filesystem::path cover_path = boost::filesystem::absolute(boost::filesystem::path(resources_dir()) / "/profiles/" / strVendor / cover_file).make_preferred();
-            if (!boost::filesystem::exists(cover_path)) {
-                cover_path = (boost::filesystem::absolute(boost::filesystem::path(resources_dir()) / "/web/image/printer/") / cover_file).make_preferred();
-            }
-            OneModel["cover"] = cover_path.string();
-
-            m_ProfileJson["model"].push_back(OneModel);
-            BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(": machine_model %1%") % s1;
+        if (!result) {
+            BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": machine_model profile %1% is missing name, nozzle_diameter, and/or default_materials.") % (vendor_dir / profile_path);
+            return -1;
         }
 
-        // Collect instantiation=true machine profiles.
-        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(": vendor %1% has %2% machines") % strVendor % pMachine.size();
-        for (int n = 0; n < pMachine.size(); n++) {
-            json OneMachine = pMachine.at(n);
+        OneModel["name"] = strName;
+        OneModel["vendor"] = vendor_name;
+        StringReplace(strNozzleDiameter, " ", "");
+        OneModel["nozzle_diameter"] = strNozzleDiameter;
+        OneModel["materials"] = strDefaultMaterials;
+        OneModel["nozzle_selected"] = "";
 
-            std::string s1 = OneMachine["name"];
-            std::string s2 = OneMachine["sub_path"];
+        std::string cover_file = profile_name + "_cover.png";
+        boost::filesystem::path cover_path = boost::filesystem::absolute(boost::filesystem::path(resources_dir()) / "/profiles/" / vendor_name / cover_file).make_preferred();
+        if (!boost::filesystem::exists(cover_path)) {
+            cover_path = (boost::filesystem::absolute(boost::filesystem::path(resources_dir()) / "/web/image/printer/") / cover_file).make_preferred();
+        }
+        OneModel["cover"] = cover_path.string();
 
-            std::string strInstantiation;
-            std::string strPrinterModel;
-            std::string strNozzleDiameter0;
-            result = ProfileCache::get(strVendor, vendor_dir, s1, s2,
-                                       //std::make_pair("instantiation", std::ref(strInstantiation)),
-                                       //std::make_pair("printer_model", std::ref(strPrinterModel)),
-                                       //std::make_tuple("nozzle_diameter", 0, std::ref(strNozzleDiameter0)));
-                                       ProfileCache::Copy("instantiation", strInstantiation),
-                                       ProfileCache::Copy("printer_model", strPrinterModel),
-                                       ProfileCache::CopyIndex("nozzle_diameter", 0, strNozzleDiameter0));
+        m_ProfileJson["model"].push_back(OneModel);
+        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(": machine_model %1%") % profile_name;
+    }
 
-            if (strInstantiation.compare("true") == 0) {
-                if (!result) {
-                    BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": machine profile %1% is missing printer_model and/or nozzle_diameter.") % (vendor_dir / s2);
+    // Collect instantiation=true machine profiles.
+    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(": vendor %1% has %2% machines") % vendor_name % pMachine.size();
+    for (int n = 0; n < pMachine.size(); n++) {
+        json OneMachine = pMachine.at(n);
+
+        std::string profile_name = OneMachine["name"];
+        std::string profile_path = OneMachine["sub_path"];
+
+        std::string strInstantiation;
+        std::string strPrinterModel;
+        std::string strNozzleDiameter0;
+        result = Get(vendor_name, vendor_dir, profile_name, profile_path,
+                     Copy("instantiation", strInstantiation),
+                     Copy("printer_model", strPrinterModel),
+                     CopyIndex("nozzle_diameter", 0, strNozzleDiameter0));
+
+        if (!result) {
+            BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": machine profile %1% is missing instantiation, printer_model, and/or nozzle_diameter.") % (vendor_dir / profile_path);
+            return -1;
+        }
+
+        if (strInstantiation.compare("true") == 0) {
+            OneMachine["model"] = strPrinterModel;
+            OneMachine["nozzle"] = strNozzleDiameter0;
+            m_ProfileJson["machine"][profile_name] = OneMachine;
+            BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(": machine %1% model=%2% nozzle=%3%") % profile_name % strPrinterModel % strNozzleDiameter0;
+        }
+    }
+
+    // Collect instantiation=true filament profiles.
+    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(": vendor %1% has %2% filaments") % vendor_name % pFilament.size();
+    for (int n = 0; n < pFilament.size(); n++) {
+        json OneFF = pFilament.at(n);
+
+        std::string profile_name = OneFF["name"];
+        std::string profile_path = OneFF["sub_path"];
+
+        std::string strInstantiation;
+        std::string strFilamentVendor;
+        std::string strFilamentType;
+        std::vector<std::string> vecCompatiblePrinters;
+        result = Get(vendor_name, vendor_dir, profile_name, profile_path,
+                     Copy("instantiation", strInstantiation),
+                     CopyIndexWithDefault("filament_vendor", 0, strFilamentVendor, std::string("Generic")),
+                     CopyIndex("filament_type", 0, strFilamentType),
+                     Copy("compatible_printers", vecCompatiblePrinters));
+
+        if (!result) {
+            BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": filament profile %1% is missing instantiation, filament_type, and/or compatible_printers.") % (vendor_dir / profile_path);
+            return -1;
+        }
+
+        if (strInstantiation.compare("true") == 0) {
+            OneFF["vendor"] = strFilamentVendor;
+            OneFF["type"] = strFilamentType;
+            OneFF["selected"] = 0;
+
+            // Populate model_list string from compatible_printers.
+            std::string model_list;
+            for (std::string compatible_printer : vecCompatiblePrinters) {
+                if (m_ProfileJson["machine"].contains(compatible_printer)) {
+                    const std::string model = m_ProfileJson["machine"][compatible_printer]["model"];
+                    const std::string nozzle = m_ProfileJson["machine"][compatible_printer]["nozzle"];
+                    model_list = (boost::format("%1%[%2%++%3%]") % model_list % model % nozzle).str();
+                }
+                else {
+                    BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": filament profile %1% has unknown compatible_printer %2%.") % (vendor_dir / profile_path) % compatible_printer;
                     return -1;
                 }
-                OneMachine["model"] = strPrinterModel;
-                OneMachine["nozzle"] = strNozzleDiameter0;
-                m_ProfileJson["machine"][s1] = OneMachine;
-                BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(": machine %1% model=%2% nozzle=%3%") % s1 % strPrinterModel % strNozzleDiameter0;
             }
+            OneFF["models"] = model_list;
+
+            m_ProfileJson["filament"][profile_name] = OneFF;
+            BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(": filament %1% vendor=%2% type=%3% num_compatible_printers=%4%") % profile_name % strFilamentVendor % strFilamentType % vecCompatiblePrinters.size();
         }
+    }
 
-        // Collect instantiation=true filament profiles.
-        //"instantiation"
-        //"filament_vendor"[0] (default "Generic")
-        //"filament_type"[0]
-        //"compatible_printers" vector<str>
-        //    check if the compatible_printer strings are in m_ProfileJson[machine]
-        //    if so get m_ProfileJson[machine][compatible_printer][model and nozzle]
-        //    creates ModelList in kinda a strange way
-        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(": vendor %1% has %2% filaments") % strVendor % pFilament.size();
-        for (int n = 0; n < pFilament.size(); n++) {
-            json OneFF = pFilament.at(n);
+    // Collect instantiation=true process profiles.
+    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(": vendor %1% has %2% processes") % vendor_name % pProcess.size();
+    for (int n = 0; n < pProcess.size(); n++) {
+        json OneProcess = pProcess.at(n);
 
-            std::string s1 = OneFF["name"];
-            std::string s2 = OneFF["sub_path"];
+        std::string profile_name = OneProcess["name"];
+        std::string profile_path = OneProcess["sub_path"];
 
-            // FIXME ACM ProfileCache::get should now flag this as an error if the vendor profile family has two filament profiles with the same name but different sub_paths.
-            //if (m_ProfileJson["filament"].contains(s1)) {
-            //    // Vendor profile family already contains a filament with this name.
-            //    continue;
-            //}
+        std::string strInstantiation;
+        result = Get(vendor_name, vendor_dir, profile_name, profile_path,
+                     Copy("instantiation", strInstantiation));
 
-            std::string strInstantiation;
-            std::string strFilamentVendor;
-            std::string strFilamentType;
-            std::vector<std::string> vecCompatiblePrinters;
-            result = ProfileCache::get(strVendor, vendor_dir, s1, s2,
-                                       //std::make_pair("instantiation", std::ref(strInstantiation)),
-                                       //std::make_tuple("filament_vendor", 0, std::ref(strFilamentVendor), "Generic"), // FIXME ACM how to get default?
-                                       //std::make_tuple("filament_type", 0, std::ref(strFilamentType)),
-                                       //std::make_pair("compatible_printers", std::ref(vecCompatiblePrinters))); // FIXME ACM this might need to use get_to(vector ref)
-                                       ProfileCache::Copy("instantiation", strInstantiation),
-                                       ProfileCache::CopyIndexWithDefault("filament_vendor", 0, strFilamentVendor, "Generic"),
-                                       ProfileCache::CopyIndex("filament_type", 0, strFilamentType),
-                                       ProfileCache::Copy("compatible_printers", vecCompatiblePrinters));
-
-            if (strInstantiation.compare("true") == 0) {
-                if (!result) {
-                    BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": filament profile %1% is missing filament_type and/or compatible_printers.") % (vendor_dir / s2);
-                    return -1;
-                }
-
-                OneFF["vendor"] = strFilamentVendor;
-                OneFF["type"] = strFilamentType;
-                OneFF["selected"] = 0;
-                OneFF["models"]   = ""; // FIXME ACM populate models string
-                m_ProfileJson["filament"][s1] = OneFF;
-            }
+        if (strInstantiation.compare("true") == 0) {
+            m_ProfileJson["process"].push_back(OneProcess);
+            BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(": process %1%") % profile_name;
         }
-
-
-
-
-
-
-
-
-
-
-        // BBS:Filament
-        json tFilaList = m_OrcaFilaList; // FIXME ACM this can go away - only used for inheritance in GetFilamentInfo
-        int nsize          = pFilament.size();
-
-        for (int n = 0; n < nsize; n++) {
-            json OneFF = pFilament.at(n);
-
-            std::string s1    = OneFF["name"];
-            std::string s2    = OneFF["sub_path"];
-
-            tFilaList[s1] = OneFF;
-            BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " Vendor: " << strVendor <<", tFilaList Add: " << s1;
-        }
-
-        for (int n = 0; n < nsize; n++) {
-            json OneFF = pFilament.at(n);
-
-            std::string s1 = OneFF["name"];
-            std::string s2 = OneFF["sub_path"];
-
-            if (!m_ProfileJson["filament"].contains(s1)) {
-                boost::filesystem::path sub_path = boost::filesystem::absolute(vendor_dir / s2).make_preferred();
-                if (!boost::filesystem::exists(sub_path)) {
-                    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM2 skip !sub_path name=%1% sub_path=%2%") % s1 % sub_path;
-                    continue;
-                }
-
-                std::string sub_file = sub_path.string();
-                LoadFile(sub_file, contents);
-                try {
-                    json pm = json::parse(contents);
-
-                    std::string strInstant = pm["instantiation"];
-
-                    if (strInstant == "true") {
-                        std::string sV;
-                        std::string sT;
-
-                        int nRet = GetFilamentInfo(vendor_dir.string(),tFilaList, sub_file, sV, sT);
-                        if (nRet != 0) {
-                            BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " Load Filament:" << s1 << ", GetFilamentInfo Failed, Vendor:" << sV << ",Type:"<< sT;
-                            continue;
-                        }
-
-                        OneFF["vendor"] = sV;
-                        OneFF["type"]   = sT;
-
-                        OneFF["models"]   = "";
-
-                        int nPrinter = -1;
-                        std::string ModelList = "";
-                        if (pm.contains("compatible_printers")) {
-                            json pPrinters = pm["compatible_printers"];
-                            nPrinter = pPrinters.size();
-                            for (int i = 0; i < nPrinter; i++) {
-                                std::string sP = pPrinters.at(i);
-                                if (m_ProfileJson["machine"].contains(sP)) {
-                                    try {
-                                        std::string mModel = m_ProfileJson["machine"][sP]["model"];
-                                        std::string mNozzle = m_ProfileJson["machine"][sP]["nozzle"];
-                                        std::string NewModel = mModel + "++" + mNozzle;
-                                        ModelList = (boost::format("%1%[%2%]") % ModelList % NewModel).str();
-                                    } catch (std::exception &e) {
-                                        BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << " ACM4 exception listing compatible printers:";
-                                        BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << "    sP=" << sP;
-                                        json mpsp = m_ProfileJson["machine"][sP];
-                                        if (mpsp.contains("model")) {
-                                            BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << "    model=" << mpsp["model"];
-                                        } else {
-                                            BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << "    !contains model";
-                                        }
-                                        if (mpsp.contains("nozzle")) {
-                                            BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << "    nozzle=" << mpsp["nozzle"];
-                                        } else {
-                                            BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << "    !contains nozzle";
-                                        }
-                                        BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << "    m_ProfileJson[machine][sP]=" << m_ProfileJson["machine"][sP];
-                                    }
-                                }
-                            }
-                        }
-
-                        OneFF["models"]    = ModelList;
-                        OneFF["selected"] = 0;
-
-                        m_ProfileJson["filament"][s1] = OneFF;
-                        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM2 added filament to json name=%1% vendor=%2% type=%3% nPrinter=%4%") % s1 % sV % sT % nPrinter;
-                    } else {
-                        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM2 skip !instantiation name=%1%") % s1;
-                        continue;
-                    }
-                }
-                catch (std::exception &e) {
-                    BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << ": ACM2 parse " << sub_file << " got exception: " << e.what();
-                }
-            } else {
-                BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM2 skip already in json name=%1%") % s1;
-            }
-        }
-        if(strVendor == PresetBundle::ORCA_FILAMENT_LIBRARY)
-            m_OrcaFilaList = tFilaList;
-
-        // Collect instantiation=true process profiles.
-        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(": vendor %1% has %2% processes") % strVendor % pProcess.size();
-        for (int n = 0; n < pProcess.size(); n++) {
-            json OneProcess = pProcess.at(n);
-
-            std::string s1 = OneProcess["name"];
-            std::string s2 = OneProcess["sub_path"];
-
-            std::string strInstantiation;
-            //result = ProfileCache::get(strVendor, vendor_dir, s1, s2, std::make_pair("instantiation", std::ref(strInstantiation)));
-            result = ProfileCache::get(strVendor, vendor_dir, s1, s2, ProfileCache::Copy("instantiation", strInstantiation));
-
-            if (strInstantiation.compare("true") == 0) {
-                m_ProfileJson["process"].push_back(OneProcess);
-                BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(": process %1%") % s1;
-            }
-        }
-
-    } catch (nlohmann::detail::parse_error &err) {
-        BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << ": parse " << strFilePath << " got a nlohmann::detail::parse_error, reason = " << err.what();
-        return -1;
-    } catch (std::exception &e) {
-        BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << ": parse " << strFilePath << " got exception: " << e.what();
-        return -1;
     }
 
     return 0;
