@@ -1135,7 +1135,7 @@ int GuideFrame::LoadProfileFamily(std::string vendor_name, std::string file_name
         BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": vendor profile %1% is missing machine_model_list, machine_list, filament_list and/or process_list fields.") % file_name;
         return -1;
     }
-    
+
     BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(": vendor %1% has %2% machine_models") % vendor_name % pModels.size();
     for (int n = 0; n < pModels.size(); n++) {
         json OneModel = pModels.at(n);
