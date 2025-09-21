@@ -1146,13 +1146,22 @@ int GuideFrame::LoadProfileFamily(std::string vendor_name, std::string file_name
         std::string profile_name = OneModel["model"];
         std::string profile_path = OneModel["sub_path"];
 
+        // Default cover image if none specified in machine_model profile.
+        std::string cover_file = profile_name + "_cover.png";
+        boost::filesystem::path cover_path = boost::filesystem::absolute(boost::filesystem::path(resources_dir()) / "/profiles/" / vendor_name / cover_file).make_preferred();
+        if (!boost::filesystem::exists(cover_path)) {
+            cover_path = (boost::filesystem::absolute(boost::filesystem::path(resources_dir()) / "/web/image/printer/") / cover_file).make_preferred();
+        }
+
         std::string strName;
         std::string strNozzleDiameter;
         std::string strDefaultMaterials;
+        std::string strCover;
         result = Get(vendor_name, vendor_dir, profile_name, profile_path,
                      Copy("name", strName),
                      Copy("nozzle_diameter", strNozzleDiameter),
-                     Copy("default_materials", strDefaultMaterials));
+                     Copy("default_materials", strDefaultMaterials),
+                     CopyWithDefault("cover", strCover, std::string(cover_path.string())));
 
         if (!result) {
             BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": machine_model profile %1% is missing name, nozzle_diameter, and/or default_materials fields.") % (vendor_dir / profile_path);
@@ -1165,13 +1174,7 @@ int GuideFrame::LoadProfileFamily(std::string vendor_name, std::string file_name
         OneModel["nozzle_diameter"] = strNozzleDiameter;
         OneModel["materials"] = strDefaultMaterials;
         OneModel["nozzle_selected"] = "";
-
-        std::string cover_file = profile_name + "_cover.png";
-        boost::filesystem::path cover_path = boost::filesystem::absolute(boost::filesystem::path(resources_dir()) / "/profiles/" / vendor_name / cover_file).make_preferred();
-        if (!boost::filesystem::exists(cover_path)) {
-            cover_path = (boost::filesystem::absolute(boost::filesystem::path(resources_dir()) / "/web/image/printer/") / cover_file).make_preferred();
-        }
-        OneModel["cover"] = cover_path.string();
+        OneModel["cover"] = strCover;
 
         m_ProfileJson["model"].push_back(OneModel);
         BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(": machine_model %1%") % profile_name;
