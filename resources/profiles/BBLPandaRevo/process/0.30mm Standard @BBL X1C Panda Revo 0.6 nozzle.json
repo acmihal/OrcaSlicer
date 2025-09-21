@@ -1,7 +1,7 @@
 {
     "type": "process",
     "name": "0.30mm Standard @BBL X1C Panda Revo 0.6 nozzle",
-    "inherits": "0.30mm Standard @BBL X1C 0.6 nozzle",
+    "inherits": "BBL::0.30mm Standard @BBL X1C 0.6 nozzle",
     "from": "system",
     "setting_id": "GP444",
     "instantiation": "true",
