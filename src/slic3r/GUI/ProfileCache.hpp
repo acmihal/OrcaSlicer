@@ -29,6 +29,11 @@ public:
         }
     }
 
+    static bool contains(std::string vendor_name, std::string profile_name) {
+        std::string vpn = vendor_name + delimiter + profile_name;
+        return _vendorProfilePathMap.find(vpn) != _vendorProfilePathMap.end();
+    }
+
     static boost::filesystem::path recall(std::string vendor_name, std::string profile_name) {
         std::string vpn = vendor_name + delimiter + profile_name;
         if (_vendorProfilePathMap.find(vpn) == _vendorProfilePathMap.end()) {
@@ -56,6 +61,10 @@ public:
         } else {
             _vendorPathMap[vendor_name] = vendor_path;
         }
+    }
+
+    static bool contains(std::string vendor_name) {
+        return _vendorPathMap.find(vendor_name) != _vendorPathMap.end();
     }
 
     static boost::filesystem::path recall(std::string vendor_name) {
@@ -175,23 +184,35 @@ bool Get(const std::string vendor_name, const json& j, Head key_dest, Tail... ta
         for (auto it = parent_profile_names.crbegin(); !found_in_parent && it != parent_profile_names.crend(); ++it) {
             std::string parent_profile_name = *it;
 
-            // The default is to inherit from the current vendor.
-            std::string parent_vendor_name = vendor_name;
-
-            // Unless the inherits line is of the form parent_vendor::parent_profile.
+            // If the parent_profile_name is of the form parent_vendor::parent_profile,
+            // then the inheritance is pointing back to a specific vendor_name.
+            // Search only in that vendor library, which must have been parsed already.
             size_t del_pos = parent_profile_name.find(delimiter);
             if (del_pos != std::string::npos) {
-                parent_vendor_name = parent_profile_name.substr(0, del_pos);
+                // There is no fallback to OrcaFilamentLibrary if the parent_vendor was explicit.
+                std::string parent_vendor_name = parent_profile_name.substr(0, del_pos);
                 parent_profile_name = parent_profile_name.substr(del_pos + delimiter.length());
+
+                boost::filesystem::path parent_vendor_path = VendorPathCache::recall(parent_vendor_name);
+                boost::filesystem::path parent_profile_path = VendorProfilePathCache::recall(parent_vendor_name, parent_profile_name);
+
+                found_in_parent = Get(parent_vendor_name, parent_vendor_path, parent_profile_name, parent_profile_path, key_dest);
             }
+            else {
+                // Otherwise the default is to search in the current vendor.
+                std::string parent_vendor_name = vendor_name;
 
-            // Recall the paths for the parent_vendor and the parent_profile.
-            // These need to have been parsed already.
-            boost::filesystem::path parent_vendor_path = VendorPathCache::recall(parent_vendor_name);
-            boost::filesystem::path parent_profile_path = VendorProfilePathCache::recall(parent_vendor_name, parent_profile_name);
+                if (!VendorProfilePathCache::contains(parent_vendor_name, parent_profile_name)) {
+                    // And if the parent profile is not in the current vendor library,
+                    // the final fallback is to check the OrcaFilamentLibrary.
+                    parent_vendor_name = "OrcaFilamentLibrary";
+                }
 
-            // Search in the parent profile for the key_dest pair.
-            found_in_parent = Get(parent_vendor_name, parent_vendor_path, parent_profile_name, parent_profile_path, key_dest);
+                boost::filesystem::path parent_vendor_path = VendorPathCache::recall(parent_vendor_name);
+                boost::filesystem::path parent_profile_path = VendorProfilePathCache::recall(parent_vendor_name, parent_profile_name);
+
+                found_in_parent = Get(parent_vendor_name, parent_vendor_path, parent_profile_name, parent_profile_path, key_dest);
+            }
         }
 
         if (!found_in_parent) {
