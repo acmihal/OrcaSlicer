@@ -1,7 +1,7 @@
 {
     "type": "machine",
     "name": "Bambu Lab X1 Carbon Panda Revo 0.25 nozzle",
-    "inherits": "Bambu Lab X1 Carbon 0.2 nozzle",
+    "inherits": "BBL::Bambu Lab X1 Carbon 0.2 nozzle",
     "from": "system",
     "setting_id": "GM0402",
     "instantiation": "false",

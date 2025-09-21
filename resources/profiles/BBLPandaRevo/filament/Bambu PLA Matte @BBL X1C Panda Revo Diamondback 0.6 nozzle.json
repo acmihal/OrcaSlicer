@@ -1,7 +1,7 @@
 {
     "type": "filament",
     "name": "Bambu PLA Matte @BBL X1C Panda Revo Diamondback 0.6 nozzle",
-    "inherits": "Bambu PLA Matte @BBL X1C",
+    "inherits": "BBL::Bambu PLA Matte @BBL X1C",
     "from": "system",
     "setting_id": "GFSA01_34",
     "instantiation": "true",

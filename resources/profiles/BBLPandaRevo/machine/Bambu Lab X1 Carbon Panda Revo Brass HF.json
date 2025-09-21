@@ -8,5 +8,6 @@
     "family": "BBL-3DP",
     "machine_tech": "FFF",
     "model_id": "PR2",
-    "default_materials": "Bambu PLA Matte @BBL X1C Panda Revo Brass HF"
+    "default_materials": "Bambu PLA Matte @BBL X1C Panda Revo Brass HF",
+    "cover": "Bambu Lab X1 Carbon Panda Revo_cover.png"
 }
