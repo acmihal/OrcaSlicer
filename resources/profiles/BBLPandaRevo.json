@@ -1,0 +1,414 @@
+{
+    "name": "BBL Panda Revo",
+    "version": "02.00.00.54",
+    "force_update": "0",
+    "description": "BBL Printers with Panda Revo Hotend",
+    "machine_model_list": [
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo Brass",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo Brass.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo Brass HF",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo Brass HF.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo Diamondback",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo Diamondback.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo ObXidian",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo ObXidian.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo ObXidian HF",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo ObXidian HF.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo HTA",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo HTA.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo High Temperature",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo High Temperature.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo HF-HTA",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo HF-HTA.json"
+        }
+    ],
+    "process_list": [
+        {
+            "name": "0.10mm Standard @BBL X1C Panda Revo 0.15 nozzle",
+            "sub_path": "process/0.10mm Standard @BBL X1C Panda Revo 0.15 nozzle.json"
+        },
+        {
+            "name": "0.10mm Standard @BBL X1C Panda Revo 0.25 nozzle",
+            "sub_path": "process/0.10mm Standard @BBL X1C Panda Revo 0.25 nozzle.json"
+        },
+        {
+            "name": "0.20mm Standard @BBL X1C Panda Revo 0.4 nozzle",
+            "sub_path": "process/0.20mm Standard @BBL X1C Panda Revo 0.4 nozzle.json"
+        },
+        {
+            "name": "0.30mm Standard @BBL X1C Panda Revo 0.6 nozzle",
+            "sub_path": "process/0.30mm Standard @BBL X1C Panda Revo 0.6 nozzle.json"
+        },
+        {
+            "name": "0.40mm Standard @BBL X1C Panda Revo 0.8 nozzle",
+            "sub_path": "process/0.40mm Standard @BBL X1C Panda Revo 0.8 nozzle.json"
+        },
+        {
+            "name": "0.40mm Standard @BBL X1C Panda Revo 1.0 nozzle",
+            "sub_path": "process/0.40mm Standard @BBL X1C Panda Revo 1.0 nozzle.json"
+        },
+        {
+            "name": "0.50mm Standard @BBL X1C Panda Revo 1.2 nozzle",
+            "sub_path": "process/0.50mm Standard @BBL X1C Panda Revo 1.2 nozzle.json"
+        },
+        {
+            "name": "0.60mm Standard @BBL X1C Panda Revo 1.4 nozzle",
+            "sub_path": "process/0.60mm Standard @BBL X1C Panda Revo 1.4 nozzle.json"
+        }
+    ],
+    "filament_list": [
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo Brass 0.15 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo Brass 0.15 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo Brass 0.25 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo Brass 0.25 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo Brass 0.4 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo Brass 0.4 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo Brass 0.6 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo Brass 0.6 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo Brass 0.8 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo Brass 0.8 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo Brass HF 0.4 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo Brass HF 0.4 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo Brass HF 0.6 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo Brass HF 0.6 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo Brass HF 0.8 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo Brass HF 0.8 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo Brass HF 1.0 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo Brass HF 1.0 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo Brass HF 1.2 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo Brass HF 1.2 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo Brass HF 1.4 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo Brass HF 1.4 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo Diamondback 0.25 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo Diamondback 0.25 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo Diamondback 0.4 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo Diamondback 0.4 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo Diamondback 0.6 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo Diamondback 0.6 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo Diamondback 0.8 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo Diamondback 0.8 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo ObXidian 0.25 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo ObXidian 0.25 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo ObXidian 0.4 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo ObXidian 0.4 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo ObXidian 0.6 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo ObXidian 0.6 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo ObXidian 0.8 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo ObXidian 0.8 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo ObXidian HF 0.4 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo ObXidian HF 0.4 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo ObXidian HF 0.6 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo ObXidian HF 0.6 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo ObXidian HF 0.8 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo ObXidian HF 0.8 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo ObXidian HF 1.0 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo ObXidian HF 1.0 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo ObXidian HF 1.2 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo ObXidian HF 1.2 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo ObXidian HF 1.4 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo ObXidian HF 1.4 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo HTA 0.25 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo HTA 0.25 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo HTA 0.4 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo HTA 0.4 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo HTA 0.6 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo HTA 0.6 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo HTA 0.8 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo HTA 0.8 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo High Temperature 0.4 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo High Temperature 0.4 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo High Temperature 0.6 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo High Temperature 0.6 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo High Temperature 0.8 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo High Temperature 0.8 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo HF-HTA 0.4 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo HF-HTA 0.4 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo HF-HTA 0.6 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo HF-HTA 0.6 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo HF-HTA 0.8 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo HF-HTA 0.8 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo HF-HTA 1.0 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo HF-HTA 1.0 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo HF-HTA 1.2 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo HF-HTA 1.2 nozzle.json"
+        },
+        {
+            "name": "Bambu PLA Matte @BBL X1C Panda Revo HF-HTA 1.4 nozzle",
+            "sub_path": "filament/Bambu PLA Matte @BBL X1C Panda Revo HF-HTA 1.4 nozzle.json"
+        }
+    ],
+    "machine_list": [
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo 0.15 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo 0.15 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo 0.25 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo 0.25 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo 0.4 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo 0.4 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo 0.6 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo 0.6 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo 0.8 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo 0.8 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo 1.0 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo 1.0 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo 1.2 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo 1.2 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo 1.4 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo 1.4 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo Brass 0.15 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo Brass 0.15 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo Brass 0.25 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo Brass 0.25 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo Brass 0.4 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo Brass 0.4 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo Brass 0.6 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo Brass 0.6 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo Brass 0.8 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo Brass 0.8 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo Brass HF 0.4 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo Brass HF 0.4 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo Brass HF 0.6 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo Brass HF 0.6 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo Brass HF 0.8 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo Brass HF 0.8 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo Brass HF 1.0 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo Brass HF 1.0 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo Brass HF 1.2 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo Brass HF 1.2 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo Brass HF 1.4 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo Brass HF 1.4 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo Diamondback 0.25 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo Diamondback 0.25 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo Diamondback 0.4 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo Diamondback 0.4 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo Diamondback 0.6 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo Diamondback 0.6 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo Diamondback 0.8 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo Diamondback 0.8 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo ObXidian 0.25 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo ObXidian 0.25 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo ObXidian 0.4 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo ObXidian 0.4 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo ObXidian 0.6 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo ObXidian 0.6 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo ObXidian 0.8 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo ObXidian 0.8 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo ObXidian HF 0.4 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo ObXidian HF 0.4 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo ObXidian HF 0.6 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo ObXidian HF 0.6 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo ObXidian HF 0.8 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo ObXidian HF 0.8 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo ObXidian HF 1.0 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo ObXidian HF 1.0 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo ObXidian HF 1.2 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo ObXidian HF 1.2 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo ObXidian HF 1.4 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo ObXidian HF 1.4 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo HTA 0.25 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo HTA 0.25 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo HTA 0.4 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo HTA 0.4 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo HTA 0.6 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo HTA 0.6 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo HTA 0.8 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo HTA 0.8 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo High Temperature 0.4 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo High Temperature 0.4 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo High Temperature 0.6 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo High Temperature 0.6 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo High Temperature 0.8 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo High Temperature 0.8 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo HF-HTA 0.4 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo HF-HTA 0.4 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo HF-HTA 0.6 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo HF-HTA 0.6 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo HF-HTA 0.8 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo HF-HTA 0.8 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo HF-HTA 1.0 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo HF-HTA 1.0 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo HF-HTA 1.2 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo HF-HTA 1.2 nozzle.json"
+        },
+        {
+            "name": "Bambu Lab X1 Carbon Panda Revo HF-HTA 1.4 nozzle",
+            "sub_path": "machine/Bambu Lab X1 Carbon Panda Revo HF-HTA 1.4 nozzle.json"
+        }
+    ]
+}
