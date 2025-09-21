@@ -1094,11 +1094,11 @@ void StringReplace(string &strBase, string strSrc, string strDes)
     }
 }
 
-
 int GuideFrame::LoadProfileFamily(std::string vendor_name, std::string file_name)
 {
     using ProfileCache::Get;
     using ProfileCache::Copy;
+    using ProfileCache::CopyWithDefault;
     using ProfileCache::CopyIndex;
     using ProfileCache::CopyIndexWithDefault;
 
@@ -1131,7 +1131,8 @@ int GuideFrame::LoadProfileFamily(std::string vendor_name, std::string file_name
                       Copy("process_list", pProcess));
 
     if (!result) {
-        BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": vendor profile %1% is missing machine_model_list, machine_list, filament_list and/or process_list.") % file_name;
+        // If there are sections missing in the vendor profile it is considered a fatal error.
+        BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": vendor profile %1% is missing machine_model_list, machine_list, filament_list and/or process_list fields.") % file_name;
         return -1;
     }
     
@@ -1154,8 +1155,8 @@ int GuideFrame::LoadProfileFamily(std::string vendor_name, std::string file_name
                      Copy("default_materials", strDefaultMaterials));
 
         if (!result) {
-            BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": machine_model profile %1% is missing name, nozzle_diameter, and/or default_materials.") % (vendor_dir / profile_path);
-            return -1;
+            BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": machine_model profile %1% is missing name, nozzle_diameter, and/or default_materials fields.") % (vendor_dir / profile_path);
+            continue;
         }
 
         OneModel["name"] = strName;
@@ -1188,16 +1189,17 @@ int GuideFrame::LoadProfileFamily(std::string vendor_name, std::string file_name
         std::string strPrinterModel;
         std::string strNozzleDiameter0;
         result = Get(vendor_name, vendor_dir, profile_name, profile_path,
-                     Copy("instantiation", strInstantiation),
+                     CopyWithDefault("instantiation", strInstantiation, std::string("false")),
                      Copy("printer_model", strPrinterModel),
                      CopyIndex("nozzle_diameter", 0, strNozzleDiameter0));
 
-        if (!result) {
-            BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": machine profile %1% is missing instantiation, printer_model, and/or nozzle_diameter.") % (vendor_dir / profile_path);
-            return -1;
-        }
-
         if (strInstantiation.compare("true") == 0) {
+            if (!result) {
+                // Only complain about missing fields for instantiation=true profiles.
+                BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": machine profile %1% is missing printer_model and/or nozzle_diameter fields.") % (vendor_dir / profile_path);
+                continue;
+            }
+
             OneMachine["model"] = strPrinterModel;
             OneMachine["nozzle"] = strNozzleDiameter0;
             m_ProfileJson["machine"][profile_name] = OneMachine;
@@ -1218,17 +1220,18 @@ int GuideFrame::LoadProfileFamily(std::string vendor_name, std::string file_name
         std::string strFilamentType;
         std::vector<std::string> vecCompatiblePrinters;
         result = Get(vendor_name, vendor_dir, profile_name, profile_path,
-                     Copy("instantiation", strInstantiation),
+                     CopyWithDefault("instantiation", strInstantiation, std::string("false")),
                      CopyIndexWithDefault("filament_vendor", 0, strFilamentVendor, std::string("Generic")),
                      CopyIndex("filament_type", 0, strFilamentType),
                      Copy("compatible_printers", vecCompatiblePrinters));
 
-        if (!result) {
-            BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": filament profile %1% is missing instantiation, filament_type, and/or compatible_printers.") % (vendor_dir / profile_path);
-            return -1;
-        }
-
         if (strInstantiation.compare("true") == 0) {
+            if (!result) {
+                // Only complain about missing fields for instantiation=true profiles.
+                BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": filament profile %1% is missing filament_type and/or compatible_printers fields.") % (vendor_dir / profile_path);
+                continue;
+            }
+
             OneFF["vendor"] = strFilamentVendor;
             OneFF["type"] = strFilamentType;
             OneFF["selected"] = 0;
@@ -1243,7 +1246,7 @@ int GuideFrame::LoadProfileFamily(std::string vendor_name, std::string file_name
                 }
                 else {
                     BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": filament profile %1% has unknown compatible_printer %2%.") % (vendor_dir / profile_path) % compatible_printer;
-                    return -1;
+                    continue;
                 }
             }
             OneFF["models"] = model_list;
@@ -1263,7 +1266,8 @@ int GuideFrame::LoadProfileFamily(std::string vendor_name, std::string file_name
 
         std::string strInstantiation;
         result = Get(vendor_name, vendor_dir, profile_name, profile_path,
-                     Copy("instantiation", strInstantiation));
+                     CopyWithDefault("instantiation", strInstantiation, std::string("false")));
+        // No result == false check necessary because Get is passed defaults for all desired fields.
 
         if (strInstantiation.compare("true") == 0) {
             m_ProfileJson["process"].push_back(OneProcess);
