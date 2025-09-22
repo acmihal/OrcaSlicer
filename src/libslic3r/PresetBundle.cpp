@@ -1392,7 +1392,6 @@ VendorProfile PresetBundle::get_custom_vendor_models() const
 // Merge one vendor's presets with the other vendor's presets, report duplicates.
 std::vector<std::string> PresetBundle::merge_presets(PresetBundle &&other)
 {
-    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM this=%1% other=%2%") % this % &other;
     this->vendors.insert(other.vendors.begin(), other.vendors.end());
     std::vector<std::string> duplicate_prints        = this->prints       .merge_presets(std::move(other.prints),        this->vendors);
     std::vector<std::string> duplicate_sla_prints    = this->sla_prints   .merge_presets(std::move(other.sla_prints),    this->vendors);
@@ -1604,9 +1603,7 @@ void PresetBundle::update_selections(AppConfig &config)
     // Load it even if the current printer technology is SLA.
     // The possibly excessive filament names will be later removed with this->update_multi_material_filament_presets()
     // once the FFF technology gets selected.
-    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM old filament_presets.size=%1%") % this->filament_presets.size();
     this->filament_presets = { filaments.get_selected_preset_name() };
-    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM new filament_presets.size=%1%") % this->filament_presets.size();
     for (unsigned int i = 1; i < 1000; ++ i) {
         char name[64];
         sprintf(name, "filament_%02u", i);
@@ -1615,7 +1612,6 @@ void PresetBundle::update_selections(AppConfig &config)
             break;
         this->filament_presets.emplace_back(remove_ini_suffix(f_name));
     }
-    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM after loop filament_presets.size=%1%") % this->filament_presets.size();
     std::vector<std::string> filament_colors;
     auto f_colors = config.get_printer_setting(initial_printer_profile_name, "filament_colors");
     if (!f_colors.empty()) {
@@ -1649,18 +1645,13 @@ void PresetBundle::update_selections(AppConfig &config)
 
     std::string first_visible_filament_name;
     for (auto & fp : filament_presets) {
-        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM final loop fp=%1%") % fp;
         if (auto it = filaments.find_preset_internal(fp); it == filaments.end() || !it->is_visible || !it->is_compatible) {
             if (first_visible_filament_name.empty())
                 first_visible_filament_name = filaments.first_compatible().name;
             fp = first_visible_filament_name;
-            BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM overwrite fp=%1%") % fp;
         }
     }
 
-    for (auto & fp : filament_presets) {
-        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM final filament_presets=%1%") % fp;
-    }
 }
 
 // Load selections (current print, current filaments, current printer) from config.ini
@@ -2673,7 +2664,6 @@ std::pair<PresetsConfigSubstitutions, size_t> PresetBundle::load_vendor_configs_
     PresetsConfigSubstitutions substitutions;
 
     //BBS: add config related logs
-    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM PresetBundle=%1%") % this;
     BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" enter, path %1%, compatibility_rule %2%")%path.c_str()%compatibility_rule;
     if (flags.has(LoadConfigBundleAttribute::ResetUserProfile) || flags.has(LoadConfigBundleAttribute::LoadSystem))
         // Reset this bundle, delete user profile files if SaveImported.
@@ -2779,7 +2769,6 @@ std::pair<PresetsConfigSubstitutions, size_t> PresetBundle::load_vendor_configs_
     //2) paste the machine model
     for (auto& machine_model : machine_model_subfiles)
     {
-        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM machine_model %1% subpath %2%") % machine_model.first % machine_model.second;
         std::string subfile = path + "/" + vendor_name + "/" + machine_model.second;
         VendorProfile::PrinterModel model;
         model.id = machine_model.first;
@@ -3062,6 +3051,7 @@ std::pair<PresetsConfigSubstitutions, size_t> PresetBundle::load_vendor_configs_
             loaded.setting_id = setting_id;
             loaded.filament_id = filament_id;
             loaded.m_from_orca_filament_lib = is_from_lib;
+            BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " " << __LINE__ << loaded.name << " load filament_id: " << filament_id;
             if (presets_collection->type() == Preset::TYPE_FILAMENT) {
                 if (filament_id.empty() && "Template" != vendor_name) {
                     ++m_errors;
@@ -3071,7 +3061,6 @@ std::pair<PresetsConfigSubstitutions, size_t> PresetBundle::load_vendor_configs_
                     return reason;
                 }
                 else {
-                    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " " << __LINE__ << loaded.name << " load filament_id: " << filament_id;
                     filament_id_maps.emplace(preset_name, filament_id);
                 }
             }
@@ -3114,7 +3103,6 @@ std::pair<PresetsConfigSubstitutions, size_t> PresetBundle::load_vendor_configs_
     filament_id_maps.clear();
     for (auto& subfile : process_subfiles)
     {
-        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM process %1% subpath %2%") % subfile.first % subfile.second;
         std::string reason = parse_subfile(substitution_context, substitutions, flags, subfile, configs, filament_id_maps, presets, presets_loaded);
         if (!reason.empty()) {
             ++m_errors;
@@ -3132,7 +3120,6 @@ std::pair<PresetsConfigSubstitutions, size_t> PresetBundle::load_vendor_configs_
     const auto is_orca_lib = vendor_name == ORCA_FILAMENT_LIBRARY;
     for (auto& subfile : filament_subfiles)
     {
-        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM filament %1% subpath %2%") % subfile.first % subfile.second;
         std::string reason = parse_subfile(substitution_context, substitutions, flags, subfile, configs, filament_id_maps, presets,
                                            presets_loaded, is_orca_lib);
         if (!reason.empty()) {
@@ -3154,7 +3141,6 @@ std::pair<PresetsConfigSubstitutions, size_t> PresetBundle::load_vendor_configs_
     filament_id_maps.clear();
     for (auto& subfile : machine_subfiles)
     {
-        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM machine %1% subpath %2%") % subfile.first % subfile.second;
         std::string reason = parse_subfile(substitution_context, substitutions, flags, subfile, configs, filament_id_maps, presets, presets_loaded);
         if (!reason.empty()) {
             ++m_errors;
@@ -3166,7 +3152,7 @@ std::pair<PresetsConfigSubstitutions, size_t> PresetBundle::load_vendor_configs_
     }
 
     //BBS: add config related logs
-    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(", finished, presets_loaded %1%")%presets_loaded;
+    BOOST_LOG_TRIVIAL(debug) << __FUNCTION__ << boost::format(", finished, presets_loaded %1%")%presets_loaded;
     return std::make_pair(std::move(substitutions), presets_loaded);
 }
 
@@ -3333,37 +3319,19 @@ void PresetBundle::update_compatible(PresetSelectCompatibleType select_other_pri
     {
 		assert(printer_preset.config.has("default_print_profile"));
 		assert(printer_preset.config.has("default_filament_profile"));
-
-        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM update_compatible0 PresetBundle=%1%") % this;
-        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM update_compatible0 printer_preset=%1% filament_presets.size=%2%") % printer_preset.name % this->filament_presets.size();
-        for (size_t idx = 0; idx < this->filament_presets.size(); ++ idx) {
-            Preset *preset = this->filaments.find_preset(this->filament_presets[idx], false);
-            const bool filament_preset_compatible = preset != nullptr && preset->is_compatible;
-            BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM update_compatible0 printer_preset=%1% filament=%2% compatible=%3%") % printer_preset.name % this->filament_presets[idx] % (int)filament_preset_compatible;
-        }
-
         const std::vector<std::string> &prefered_filament_profiles = printer_preset.config.option<ConfigOptionStrings>("default_filament_profile")->values;
         this->prints.update_compatible(printer_preset_with_vendor_profile, nullptr, select_other_print_if_incompatible,
             PreferedPrintProfileMatch(this->prints.get_selected_idx() == size_t(-1) ? nullptr : &this->prints.get_edited_preset(), printer_preset.config.opt_string("default_print_profile")));
         const PresetWithVendorProfile   print_preset_with_vendor_profile = this->prints.get_edited_preset_with_vendor_profile();
-
         // Remember whether the filament profiles were compatible before updating the filament compatibility.
         std::vector<char> 				filament_preset_was_compatible(this->filament_presets.size(), false);
         for (size_t idx = 0; idx < this->filament_presets.size(); ++ idx) {
             Preset *preset = this->filaments.find_preset(this->filament_presets[idx], false);
             filament_preset_was_compatible[idx] = preset != nullptr && preset->is_compatible;
-            BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM update_compatible1 printer_preset=%1% filament=%2% was_compatible=%3%") % printer_preset.name % this->filament_presets[idx] % (int)filament_preset_was_compatible[idx];
         }
         // First select a first compatible profile for the preset editor.
         this->filaments.update_compatible(printer_preset_with_vendor_profile, &print_preset_with_vendor_profile, select_other_filament_if_incompatible,
             PreferedFilamentsProfileMatch(this->filaments.get_selected_idx() == size_t(-1) ? nullptr : &this->filaments.get_edited_preset(), prefered_filament_profiles));
-
-        for (size_t idx = 0; idx < this->filament_presets.size(); ++ idx) {
-            Preset *preset = this->filaments.find_preset(this->filament_presets[idx], false);
-            const bool filament_preset_now_compatible = preset != nullptr && preset->is_compatible;
-            BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM update_compatible2 printer_preset=%1% filament=%2% now_compatible=%3%") % printer_preset.name % this->filament_presets[idx] % (int)filament_preset_now_compatible;
-        }
-
         if (select_other_filament_if_incompatible != PresetSelectCompatibleType::Never) {
             // Verify validity of the current filament presets.
             const std::string prefered_filament_profile = prefered_filament_profiles.empty() ? std::string() : prefered_filament_profiles.front();

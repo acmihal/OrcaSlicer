@@ -658,7 +658,6 @@ void Preset::set_visible_from_appconfig(const AppConfig &app_config)
 {
     //BBS: add config related log
     BOOST_LOG_TRIVIAL(debug) << __FUNCTION__ << boost::format(": name %1%, is_visible %2%")%name % is_visible;
-    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM name=%1% was is_visible=%2%") % name % is_visible;
     if (vendor == nullptr) { return; }
 
     if (type == TYPE_PRINTER) {
@@ -680,17 +679,10 @@ void Preset::set_visible_from_appconfig(const AppConfig &app_config)
 	    	is_visible = has(this->name);
 	    	for (auto it = this->renamed_from.begin(); ! is_visible && it != this->renamed_from.end(); ++ it)
 	    		is_visible = has(*it);
-            if (!is_visible && (name.find("Panda") != std::string::npos)) {
-                BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM installed find=%1%") % name;
-                for (const auto& pair : installed) {
-                    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM installed key=%1% value=%2%") % pair.first % pair.second; 
-                }
-            }
 	    }
     }
     //BBS: add config related log
     BOOST_LOG_TRIVIAL(debug) << __FUNCTION__ << boost::format(": name %1%, is_visible set to %2%")%name % is_visible;
-    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM name=%1% now is_visible=%2%") % name % is_visible;
 }
 
 std::string Preset::get_filament_type(std::string &display_filament_type)
@@ -2638,12 +2630,8 @@ size_t PresetCollection::update_compatible_internal(const PresetWithVendorProfil
     DynamicPrintConfig config;
     config.set_key_value("printer_preset", new ConfigOptionString(active_printer.preset.name));
     const ConfigOption *opt = active_printer.preset.config.option("nozzle_diameter");
-    if (opt) {
+    if (opt)
         config.set_key_value("num_extruders", new ConfigOptionInt((int)static_cast<const ConfigOptionFloats*>(opt)->values.size()));
-        for (auto it : static_cast<const ConfigOptionFloats*>(opt)->values) {
-            BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM printer=%1% nozzle_diameter=%2%") % active_printer.preset.name % it;
-        }
-    }
     bool some_compatible = false;
     for (size_t idx_preset = m_num_default_presets; idx_preset < m_presets.size(); ++ idx_preset) {
         bool    selected        = idx_preset == m_idx_selected;
@@ -2652,30 +2640,20 @@ size_t PresetCollection::update_compatible_internal(const PresetWithVendorProfil
 
         const PresetWithVendorProfile this_preset_with_vendor_profile = this->get_preset_with_vendor_profile(preset_edited);
         bool    was_compatible  = preset_edited.is_compatible;
-        const bool icwp = is_compatible_with_printer(this_preset_with_vendor_profile, active_printer, &config);
-        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM idx_preset=%1% [%2%,%3%) name=%4% icwp=%5% is_visible=%6%") % idx_preset % m_num_default_presets % m_presets.size() % preset_edited.name % (int)icwp % (int)preset_edited.is_visible;
-        preset_edited.is_compatible = icwp;
+        preset_edited.is_compatible = is_compatible_with_printer(this_preset_with_vendor_profile, active_printer, &config);
         some_compatible |= preset_edited.is_compatible;
-	    if ((active_print != nullptr) && preset_edited.is_compatible) {
-            const bool icwproc = is_compatible_with_print(this_preset_with_vendor_profile, *active_print, active_printer);
-            BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM idx_preset=%1% [%2%,%3%) name=%4% process=%5% icwproc=%6%") % idx_preset % m_num_default_presets % m_presets.size() % preset_edited.name % active_print->preset.name % (int)icwproc;
-	        preset_edited.is_compatible &= icwproc;
-        }
+	    if (active_print != nullptr)
+	        preset_edited.is_compatible &= is_compatible_with_print(this_preset_with_vendor_profile, *active_print, active_printer);
         if (! preset_edited.is_compatible && selected &&
-        	(unselect_if_incompatible == PresetSelectCompatibleType::Always || (unselect_if_incompatible == PresetSelectCompatibleType::OnlyIfWasCompatible && was_compatible))) {
+        	(unselect_if_incompatible == PresetSelectCompatibleType::Always || (unselect_if_incompatible == PresetSelectCompatibleType::OnlyIfWasCompatible && was_compatible)))
             m_idx_selected = size_t(-1);
-        }
-        if (selected) {
+        if (selected)
             preset_selected.is_compatible = preset_edited.is_compatible;
-        }
     }
     // Update visibility of the default profiles here if the defaults are suppressed, the current profile is not compatible and we don't want to select another compatible profile.
-    if (m_idx_selected >= m_num_default_presets && m_default_suppressed) {
-	    for (size_t i = 0; i < m_num_default_presets; ++ i) {
+    if (m_idx_selected >= m_num_default_presets && m_default_suppressed)
+	    for (size_t i = 0; i < m_num_default_presets; ++ i)
 	        m_presets[i].is_visible = ! some_compatible;
-            BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM changing visibility name=%1% is_visible=%2%") % m_presets[i].name % (int)(m_presets[i].is_visible);
-        }
-    }
     return m_idx_selected;
 }
 
