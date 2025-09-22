@@ -636,9 +636,6 @@ int GuideFrame::SaveProfile()
     for (auto it = m_ProfileJson["filament"].begin(); it != m_ProfileJson["filament"].end(); ++it) {
         if (it.value()["selected"] == 1){
             section_new[it.key()] = "true";
-            BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM set filament to appconfig filament=%1%") % it.key();
-        } else {
-            BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" ACM filament=%1% not selected in appconfig") % it.key();
         }
     }
     m_appconfig_new.set_section(section_name, section_new);
