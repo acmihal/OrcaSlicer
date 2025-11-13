@@ -14,6 +14,7 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/date_time.hpp>
 #include "boost/date_time/posix_time/ptime.hpp"
+#include <boost/log/trivial.hpp>
 
 #include <openssl/md5.h>
 
@@ -74,6 +75,7 @@ namespace boost { namespace filesystem { class directory_entry; }}
 
 namespace Slic3r {
 
+extern bool log_condition(boost::log::trivial::severity_level severity);
 extern void set_logging_level(unsigned int level);
 extern unsigned int level_string_to_boost(std::string level);
 extern std::string  get_string_logging_level(unsigned level);

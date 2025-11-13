@@ -110,6 +110,11 @@ static boost::log::trivial::severity_level level_to_boost(unsigned level)
     }
 }
 
+bool log_condition(boost::log::trivial::severity_level severity) {
+    auto core = boost::log::core::get();
+    return core->get_logging_enabled() && (severity >= logSeverity);
+}
+
 void set_logging_level(unsigned int level)
 {
     logSeverity = level_to_boost(level);

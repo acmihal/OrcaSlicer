@@ -402,11 +402,10 @@ void GuideFrame::OnScriptMessage(wxWebViewEvent &evt)
         }
         else if (strCmd == "request_userguide_profile") {
             json m_Res = json::object();
-            m_Res["command"] = "response_userguide_profile";
+            m_Res["command"]     = "response_userguide_profile";
             m_Res["sequence_id"] = "10001";
-            m_Res["response"]        = m_ProfileJson;
+            m_Res["response"]    = m_ProfileJson;
 
-            //wxString strJS = wxString::Format("HandleStudio(%s)", m_Res.dump(-1, ' ', false, json::error_handler_t::ignore));
             wxString strJS = wxString::Format("HandleStudio(%s)", m_Res.dump(-1, ' ', true));
 
             BOOST_LOG_TRIVIAL(trace) << "GuideFrame::OnScriptMessage;request_userguide_profile:" << strJS.c_str();
@@ -494,31 +493,16 @@ void GuideFrame::OnScriptMessage(wxWebViewEvent &evt)
         }
         else if (strCmd == "network_plugin_install") {
             std::string sAction = j["data"]["action"];
-
-            if (sAction == "yes") {
-                if (!network_plugin_ready)
-                    InstallNetplugin = true;
-                else //already ready
-                    InstallNetplugin = false;
-            }
-            else
-                InstallNetplugin = false;
+            InstallNetplugin = (sAction == "yes") && !network_plugin_ready;
         }
         else if (strCmd == "save_stealth_mode") {
             wxString strAction = j["data"]["action"];
-
-            if (strAction == "yes") {
-                StealthMode = true;
-            } else {
-                StealthMode = false;
-            }
+            StealthMode = (strAction == "yes");
         }
     } catch (std::exception &e) {
         // wxMessageBox(e.what(), "json Exception", MB_OK);
         BOOST_LOG_TRIVIAL(trace) << "GuideFrame::OnScriptMessage;Error:" << e.what();
     }
-
-    //wxString strAll = m_ProfileJson.dump(-1,' ',false, json::error_handler_t::ignore);
 }
 
 void GuideFrame::RunScript(const wxString &javascript)
@@ -625,9 +609,10 @@ int GuideFrame::SaveProfile()
 
     m_MainPtr->app_config->save();
 
-    std::string strAll = m_ProfileJson.dump(-1, ' ', false, json::error_handler_t::ignore);
-
-    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << "before save to app_config: "<< std::endl<<strAll;
+    if (Slic3r::log_condition(boost::log::trivial::info)) {
+        std::string strAll = m_ProfileJson.dump(-1, ' ', false, json::error_handler_t::ignore);
+        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << "before save to app_config: "<< std::endl<<strAll;
+    }
 
     //set filaments to app_config
     const std::string &section_name = AppConfig::SECTION_FILAMENTS;
@@ -977,14 +962,17 @@ int GuideFrame::LoadProfileData()
                 return 0;
         }
 
-        //sync to web
-        std::string strAll = m_ProfileJson.dump(-1, ' ', false, json::error_handler_t::ignore);
+        if (Slic3r::log_condition(boost::log::trivial::info)) {
+            std::string strAll = m_ProfileJson.dump(-1, ' ', false, json::error_handler_t::ignore);
+            BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << ", finished, json contents: " << std::endl << strAll;
+        }
 
-        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << ", finished, json contents: " << std::endl << strAll;
+        //sync to web
         json m_Res           = json::object();
         m_Res["command"]     = "userguide_profile_load_finish";
         m_Res["sequence_id"] = "10001";
         wxString strJS       = wxString::Format("HandleStudio(%s)", m_Res.dump(-1, ' ', true));
+
         if (!m_destroy)
             wxGetApp().CallAfter([this, strJS] { RunScript(strJS); });
 
