@@ -38,8 +38,6 @@ public:
 
     void load_url(wxString &url);
 
-    std::string w2s(wxString sSrc);
-
     void UpdateState();
     void OnIdle(wxIdleEvent &evt);
     // void OnClose(wxCloseEvent &evt);
