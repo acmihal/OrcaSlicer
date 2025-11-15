@@ -699,7 +699,7 @@ bool GuideFrame::apply_config(AppConfig *app_config, PresetBundle *preset_bundle
     bool check_unsaved_preset_changes = false;
     std::vector<std::string> install_bundles;
     std::vector<std::string> remove_bundles;
-    const auto vendor_dir = (boost::filesystem::path(Slic3r::data_dir()) / PRESET_SYSTEM_DIR).make_preferred();
+    const boost::filesystem::path vendor_dir = (boost::filesystem::path(Slic3r::data_dir()) / PRESET_SYSTEM_DIR).make_preferred();
     for (const auto &it : enabled_vendors) {
         if (it.second.size() > 0) {
             auto vendor_file = vendor_dir/(it.first + ".json");
@@ -899,8 +899,8 @@ int GuideFrame::LoadProfileData()
         m_ProfileJson["filament"] = json::object();
         m_ProfileJson["process"]  = json::array();
 
-        vendor_dir      = (boost::filesystem::path(Slic3r::data_dir()) / PRESET_SYSTEM_DIR).make_preferred();
-        rsrc_vendor_dir = (boost::filesystem::path(resources_dir()) / "profiles").make_preferred();
+        boost::filesystem::path vendor_dir      = (boost::filesystem::path(Slic3r::data_dir()) / PRESET_SYSTEM_DIR).make_preferred();
+        boost::filesystem::path rsrc_vendor_dir = (boost::filesystem::path(resources_dir()) / "profiles").make_preferred();
 
         // Orca: add custom as default
         // Orca: add json logic for vendor bundle
@@ -981,8 +981,6 @@ int GuideFrame::LoadProfileData()
             wxGetApp().CallAfter([this] { SaveProfileData(); });
 
     } catch (std::exception& e) {
-        // wxLogMessage("GUIDE: load_profile_error  %s ", e.what());
-        //  wxMessageBox(e.what(), "", MB_OK);
         BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << ", error: " << e.what() << std::endl;
     }
 
