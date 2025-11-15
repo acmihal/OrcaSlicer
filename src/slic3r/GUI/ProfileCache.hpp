@@ -4,6 +4,8 @@
 #include <boost/filesystem/path.hpp>
 #include <nlohmann/json.hpp>
 
+#include "libslic3r/PresetBundle.hpp"
+
 namespace Slic3r { namespace GUI { namespace ProfileCache {
 
 namespace {
@@ -205,7 +207,7 @@ bool Get(const std::string vendor_name, const json& j, Head key_dest, Tail... ta
                 if (!VendorProfilePathCache::contains(parent_vendor_name, parent_profile_name)) {
                     // And if the parent profile is not in the current vendor library,
                     // the final fallback is to check the OrcaFilamentLibrary.
-                    parent_vendor_name = "OrcaFilamentLibrary";
+                    parent_vendor_name = std::string(PresetBundle::ORCA_FILAMENT_LIBRARY);
                 }
 
                 boost::filesystem::path parent_vendor_path = VendorPathCache::recall(parent_vendor_name);
