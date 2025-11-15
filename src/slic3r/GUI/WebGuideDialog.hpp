@@ -82,8 +82,6 @@ public:
     bool apply_config(AppConfig *app_config, PresetBundle *preset_bundle, const PresetUpdater *updater, bool& apply_keeped_changes);
     bool run();
 
-    std::string w2s(wxString sSrc);
-
     // install plugin
     int DownloadPlugin();
     int InstallPlugin();
@@ -99,8 +97,6 @@ private:
     wxButton * m_TestBtn;
 
     wxString m_SectionName;
-
-    bool orca_bundle_rsrc;
 
     //First Load
     bool bFirstComplete{false};

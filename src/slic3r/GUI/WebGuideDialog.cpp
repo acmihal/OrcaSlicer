@@ -251,7 +251,7 @@ wxString GuideFrame::SetStartPage(GuidePage startpage, bool load)
     wxString strlang = wxGetApp().current_language_code_safe();
     BOOST_LOG_TRIVIAL(info) << __FUNCTION__<< boost::format(", strlang=%1%") % into_u8(strlang);
     if (strlang != "")
-        TargetUrl = wxString::Format("%s&lang=%s", w2s(TargetUrl), strlang);
+        TargetUrl = wxString::Format("%s&lang=%s", std::string(TargetUrl.mb_str()), strlang);
 
     TargetUrl = "file://" + TargetUrl;
     if (load)
@@ -304,9 +304,6 @@ void GuideFrame::OnNavigationComplete(wxWebViewEvent &evt)
     //wxLogMessage("%s", "Navigation complete; url='" + evt.GetURL() + "'");
     if (!bFirstComplete) {
         m_load_task = new boost::thread(boost::bind(&GuideFrame::LoadProfileData, this));
-       // boost::thread LoadProfileThread(boost::bind(&GuideFrame::LoadProfileData, this));
-        //LoadProfileThread.detach();
-
         bFirstComplete = true;
     }
 
@@ -581,13 +578,9 @@ void GuideFrame::OnScriptResponseMessage(wxCommandEvent &WXUNUSED(evt))
 
 bool GuideFrame::IsFirstUse()
 {
-    wxString    strUse;
     std::string strVal = wxGetApp().app_config->get(std::string(m_SectionName.mb_str()), "finish");
     if (strVal == "1")
         return false;
-
-    if (orca_bundle_rsrc == true)
-        return true;
 
     return true;
 }
@@ -899,20 +892,14 @@ int GuideFrame::LoadProfileData()
         m_ProfileJson["filament"] = json::object();
         m_ProfileJson["process"]  = json::array();
 
-        boost::filesystem::path vendor_dir      = (boost::filesystem::path(Slic3r::data_dir()) / PRESET_SYSTEM_DIR).make_preferred();
-        boost::filesystem::path rsrc_vendor_dir = (boost::filesystem::path(resources_dir()) / "profiles").make_preferred();
+        const boost::filesystem::path vendor_dir      = (boost::filesystem::path(Slic3r::data_dir()) / PRESET_SYSTEM_DIR).make_preferred();
+        const boost::filesystem::path rsrc_vendor_dir = (boost::filesystem::path(resources_dir()) / "profiles").make_preferred();
 
-        // Orca: add custom as default
-        // Orca: add json logic for vendor bundle
-        orca_bundle_rsrc = true;
+        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " vendor_dir=" << vendor_dir << std::endl;
+        BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " rsrc_vendor_dir=" << rsrc_vendor_dir << std::endl;
 
-        // search if there exists a .json file in vendor_dir folder, if exists, set orca_bundle_rsrc to false
-        for (const auto& entry : boost::filesystem::directory_iterator(vendor_dir)) {
-            if (!boost::filesystem::is_directory(entry) && boost::iequals(entry.path().extension().string(), ".json") && !boost::iequals(entry.path().stem().string(), PresetBundle::ORCA_FILAMENT_LIBRARY)) {
-                orca_bundle_rsrc = false;
-                break;
-            }
-        }
+        // Prioritized order of vendor directories. Vendors in vendor_dir have precedence over rsrc_vendor_dir.
+        const vector<boost::filesystem::path> prioritized_vendor_directories{vendor_dir, rsrc_vendor_dir};
 
         // load the default filament library first
         std::set<std::string> loaded_vendors;
@@ -1260,11 +1247,6 @@ int GuideFrame::LoadProfileFamily(std::string vendor_name, std::string file_name
     }
 
     return 0;
-}
-
-std::string GuideFrame::w2s(wxString sSrc)
-{
-    return std::string(sSrc.mb_str());
 }
 
 int GuideFrame::DownloadPlugin()
