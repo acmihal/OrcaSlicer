@@ -74,8 +74,9 @@ public:
 
     //Model - Machine - Filaments
     int LoadProfileData();
+    void PreprocessProfileData(const vector<boost::filesystem::path>& prioritized_vendor_directories);
     int SaveProfileData();
-    int LoadProfileFamily(std::string strVendor, std::string strFilePath);
+    int LoadProfileFamily(std::string vendor_name, boost::filesystem::path vendor_json, boost::filesystem::path vendor_subdir);
     int SaveProfile();
 
 

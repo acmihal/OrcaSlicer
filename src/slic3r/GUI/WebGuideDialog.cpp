@@ -883,8 +883,121 @@ bool GuideFrame::run()
         return false;
 }
 
-int GuideFrame::LoadProfileData()
-{
+void GuideFrame::PreprocessProfileData(const vector<boost::filesystem::path>& prioritized_vendor_directories) {
+    using ProfileCache::VendorPathCache;
+    using ProfileCache::VendorProfilePathCache;
+
+    // Delete any existing cached profile data.
+    ProfileCache::clear();
+
+    // Map of (vendor_name, vendor_json) pairs.
+    std::map<std::string, boost::filesystem::path> loaded_vendors;
+
+    // Visit vendor directories in priority order from high to low.
+    for (const boost::filesystem::path dir : prioritized_vendor_directories) {
+        for (const boost::filesystem::directory_entry it : boost::filesystem::directory_iterator(dir)) {
+            // Only visit json files.
+            if (boost::filesystem::is_directory(it)) continue;
+            if (it.path().extension().string() != ".json") continue;
+
+            // Get the vendor name.
+            const std::string vendor_name = it.path().stem().string();
+
+            // Skip the blacklist.json file.
+            if (vendor_name == "blacklist") {
+                BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " skipping special file " << it.path().string() << std::endl;
+                continue;
+            }
+
+            // Make sure there is a subdirectory with the vendor name.
+            const boost::filesystem::path vendor_subdir = boost::filesystem::absolute(it.path().parent_path() / vendor_name).make_preferred();
+            if (!boost::filesystem::exists(vendor_subdir) || !boost::filesystem::is_directory(vendor_subdir)) {
+                BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << " there is no vendor subdirectory for " << vendor_name << std::endl
+                                         << __FUNCTION__ << "     json file = " << it.path().string() << std::endl
+                                         << __FUNCTION__ << "     expected vendor subdirectory = " << vendor_subdir << std::endl;
+                continue;
+            }
+
+            if (loaded_vendors.find(vendor_name) != loaded_vendors.end()) {
+                BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " vendor file " << it.path().string()
+                                        << " will not be loaded because it is superseded by " << loaded_vendors[vendor_name].string()
+                                        << std::endl;
+                continue;
+            }
+
+            // Remember this (vendor_name, vendor_json) combination so that if the same vendor
+            // is seen again in a lower-priority dir, then the duplicate will be skipped.
+            loaded_vendors[vendor_name] = it.path();
+
+            VendorPathCache::store(vendor_name, vendor_subdir);
+            BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " VendorPathCache[" << vendor_name << "] = " << vendor_subdir << std::endl;
+
+            json vendor_json = json::parse(boost::nowide::ifstream(it.path()));
+
+            for (std::string field_name : {"machine_model_list", "machine_list", "filament_list", "process_list"}) {
+                if (!vendor_json.contains(field_name)) {
+                    BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << ": vendor profile " << it.path().string() << " is missing " << field_name << " field." << std::endl;
+                    continue;
+                }
+
+                json field_json = vendor_json[field_name];
+                BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << ": vendor " << vendor_name << " has " << field_json.size() << " " << field_name << " profiles." << std::endl;
+
+                for (int n = 0; n < field_json.size(); n++) {
+                    json profile_json = field_json.at(n);
+                    std::string profile_name = profile_json["name"];
+                    std::string profile_path = profile_json["sub_path"];
+
+                    // Combine the vendor_path and the profile_path to find the profile in the vendor library.
+                    const boost::filesystem::path preferred_path = boost::filesystem::absolute(vendor_subdir / profile_path).make_preferred();
+                    if (!boost::filesystem::exists(preferred_path)) {
+                        BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << " profile file does not exist:" << std::endl
+                                                 << __FUNCTION__ << "     json file = " << it.path().string() << std::endl
+                                                 << __FUNCTION__ << "     vendor = " << vendor_name << std::endl
+                                                 << __FUNCTION__ << "     vendor subdirectory = " << vendor_subdir << std::endl
+                                                 << __FUNCTION__ << "     profile name = " << profile_name << std::endl
+                                                 << __FUNCTION__ << "     profile path = " << preferred_path << std::endl;
+                        continue;
+                    }
+
+                    json profile_j = json::parse(boost::nowide::ifstream(preferred_path));
+
+                    if (!profile_j.contains("name")) {
+                        BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << " profile is missing the \"name\" field:" << std::endl
+                                                 << __FUNCTION__ << "     json file = " << it.path().string() << std::endl
+                                                 << __FUNCTION__ << "     vendor = " << vendor_name << std::endl
+                                                 << __FUNCTION__ << "     vendor subdirectory = " << vendor_subdir << std::endl
+                                                 << __FUNCTION__ << "     profile name in vendor file = " << profile_name << std::endl;
+                    }
+                    else if (profile_j["name"] != profile_name) {
+                        BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << " profile name does not match name given in vendor file:" << std::endl
+                                                 << __FUNCTION__ << "     json file = " << it.path().string() << std::endl
+                                                 << __FUNCTION__ << "     vendor = " << vendor_name << std::endl
+                                                 << __FUNCTION__ << "     vendor subdirectory = " << vendor_subdir << std::endl
+                                                 << __FUNCTION__ << "     profile name in vendor file = " << profile_name << std::endl
+                                                 << __FUNCTION__ << "     profile name in profile file = " << profile_j["name"] << std::endl;
+                        continue;
+                    }
+                    else if (VendorProfilePathCache::contains(vendor_name, profile_name)) {
+                        BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << " found a profile with a duplicate name:" << std::endl
+                                                 << __FUNCTION__ << "     json file = " << it.path().string() << std::endl
+                                                 << __FUNCTION__ << "     vendor = " << vendor_name << std::endl
+                                                 << __FUNCTION__ << "     vendor subdirectory = " << vendor_subdir << std::endl
+                                                 << __FUNCTION__ << "     profile name = " << profile_name << std::endl
+                                                 << __FUNCTION__ << "     original profile json = " << VendorProfilePathCache::recall(vendor_name, profile_name) << std::endl
+                                                 << __FUNCTION__ << "     duplicate profile json = " << profile_path << std::endl;
+                        continue;
+                    }
+
+                    VendorProfilePathCache::store(vendor_name, profile_name, profile_path);
+                    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " profile " << vendor_name << "::" << profile_name << " = " << profile_path << std::endl;
+                }
+            }
+        }
+    }
+}
+
+int GuideFrame::LoadProfileData() {
     try {
         m_ProfileJson             = json::parse("{}");
         m_ProfileJson["model"]    = json::array();
@@ -901,52 +1014,53 @@ int GuideFrame::LoadProfileData()
         // Prioritized order of vendor directories. Vendors in vendor_dir have precedence over rsrc_vendor_dir.
         const vector<boost::filesystem::path> prioritized_vendor_directories{vendor_dir, rsrc_vendor_dir};
 
-        // load the default filament library first
-        std::set<std::string> loaded_vendors;
-        auto filament_library_name = boost::filesystem::path(PresetBundle::ORCA_FILAMENT_LIBRARY).replace_extension(".json");
-        if (boost::filesystem::exists(vendor_dir / filament_library_name)) {
-            m_OrcaFilaLibPath = (vendor_dir / PresetBundle::ORCA_FILAMENT_LIBRARY).string();
-            LoadProfileFamily(PresetBundle::ORCA_FILAMENT_LIBRARY, (vendor_dir / filament_library_name).string());
-        } else {
-            m_OrcaFilaLibPath = (rsrc_vendor_dir / PresetBundle::ORCA_FILAMENT_LIBRARY).string();
-            LoadProfileFamily(PresetBundle::ORCA_FILAMENT_LIBRARY, (rsrc_vendor_dir / filament_library_name).string());
-        }
-        loaded_vendors.insert(PresetBundle::ORCA_FILAMENT_LIBRARY);
+        PreprocessProfileData(prioritized_vendor_directories);
 
-        //load custom bundle from user data path
-        boost::filesystem::directory_iterator endIter;
-        for (boost::filesystem::directory_iterator iter(vendor_dir); iter != endIter; iter++) {
-            if (!boost::filesystem::is_directory(*iter)) {
-                wxString strVendor = from_u8(iter->path().string()).BeforeLast('.');
-                strVendor          = strVendor.AfterLast('\\');
-                strVendor          = strVendor.AfterLast('/');
+        // Map of (vendor_name, vendor_json) pairs.
+        std::map<std::string, boost::filesystem::path> loaded_vendors;
 
-                wxString strExtension = from_u8(iter->path().string()).AfterLast('.').Lower();
-                if(strExtension.CmpNoCase("json") != 0 || loaded_vendors.find(w2s(strVendor)) != loaded_vendors.end())
+        // Visit vendor directories in priority order from high to low.
+        for (const boost::filesystem::path dir : prioritized_vendor_directories) {
+            for (const boost::filesystem::directory_entry it : boost::filesystem::directory_iterator(dir)) {
+                // Only visit json files.
+                if (boost::filesystem::is_directory(it)) continue;
+                if (it.path().extension().string() != ".json") continue;
+
+                // Get the vendor name.
+                const std::string vendor_name = it.path().stem().string();
+
+                // Skip the blacklist.json file.
+                if (vendor_name == "blacklist") {
+                    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " skipping special file " << it.path().string() << std::endl;
                     continue;
+                }
 
-                LoadProfileFamily(w2s(strVendor), iter->path().string());
-                loaded_vendors.insert(w2s(strVendor));
-            }
-            if (m_destroy)
-                return 0;
-        }
-
-        boost::filesystem::directory_iterator others_endIter;
-        for (boost::filesystem::directory_iterator iter(rsrc_vendor_dir); iter != others_endIter; iter++) {
-            if (!boost::filesystem::is_directory(*iter)) {
-                wxString strVendor = from_u8(iter->path().string()).BeforeLast('.');
-                strVendor          = strVendor.AfterLast('\\');
-                strVendor          = strVendor.AfterLast('/');
-                wxString strExtension = from_u8(iter->path().string()).AfterLast('.').Lower();
-                if (strExtension.CmpNoCase("json") != 0 || loaded_vendors.find(w2s(strVendor)) != loaded_vendors.end())
+                // Make sure there is a subdirectory with the vendor name.
+                const boost::filesystem::path vendor_subdir = boost::filesystem::absolute(it.path().parent_path() / vendor_name).make_preferred();
+                if (!boost::filesystem::exists(vendor_subdir) || !boost::filesystem::is_directory(vendor_subdir)) {
+                    BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << " there is no vendor subdirectory for " << vendor_name << std::endl
+                                             << __FUNCTION__ << "     json file = " << it.path().string() << std::endl
+                                             << __FUNCTION__ << "     expected vendor subdirectory = " << vendor_subdir << std::endl;
                     continue;
+                }
 
-                LoadProfileFamily(w2s(strVendor), iter->path().string());
-                loaded_vendors.insert(w2s(strVendor));
+                if (loaded_vendors.find(vendor_name) != loaded_vendors.end()) {
+                    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " vendor file " << it.path().string()
+                                            << " will not be loaded because it is superseded by " << loaded_vendors[vendor_name].string()
+                                            << std::endl;
+                    continue;
+                }
+
+                // Remember this (vendor_name, vendor_json) combination so that if the same vendor
+                // is seen again in a lower-priority dir, then the duplicate will be skipped.
+                loaded_vendors[vendor_name] = it.path();
+
+                LoadProfileFamily(vendor_name, boost::filesystem::absolute(it.path()).make_preferred(), vendor_subdir);
+
+                if (m_destroy) {
+                    return 0;
+                }
             }
-            if (m_destroy)
-                return 0;
         }
 
         if (Slic3r::log_condition(boost::log::trivial::info)) {
@@ -1064,7 +1178,7 @@ void StringReplace(string &strBase, string strSrc, string strDes)
     }
 }
 
-int GuideFrame::LoadProfileFamily(std::string vendor_name, std::string file_name)
+int GuideFrame::LoadProfileFamily(std::string vendor_name, boost::filesystem::path vendor_json, boost::filesystem::path vendor_subdir)
 {
     using ProfileCache::Get;
     using ProfileCache::Copy;
@@ -1072,39 +1186,21 @@ int GuideFrame::LoadProfileFamily(std::string vendor_name, std::string file_name
     using ProfileCache::CopyIndex;
     using ProfileCache::CopyIndexWithDefault;
 
-    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(": vendor=%1% file=%2%") % vendor_name % file_name;
+    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(": vendor=%1% subdir=%2% file=%3%") % vendor_name % vendor_subdir.string() % vendor_json.string();
 
-    // profile family json file full path, e.g. AppData/.../system/BBL.json
-    boost::filesystem::path file_path(file_name);
+    json j = json::parse(boost::nowide::ifstream(vendor_json));
 
-    // just the json filename, e.g. BBL.json
-    boost::filesystem::path vendor_profile_path = file_path.filename();
-
-    // system directory, e.g. AppData/.../system/
-    boost::filesystem::path system_dir = boost::filesystem::absolute(file_path.parent_path()).make_preferred();
-
-    // system name, e.g. system
-    std::string system_name = system_dir.filename().string();
-
-    // Vendor subdirectory, e.g. AppData/.../system/BBL
-    boost::filesystem::path vendor_dir = boost::filesystem::absolute(system_dir / vendor_name).make_preferred();
-
-    json pModels;
-    json pMachine;
-    json pFilament;
-    json pProcess;
-    bool result = Get(system_name, system_dir,
-                      vendor_name, vendor_profile_path, 
-                      Copy("machine_model_list", pModels),
-                      Copy("machine_list", pMachine),
-                      Copy("filament_list", pFilament),
-                      Copy("process_list", pProcess));
-
-    if (!result) {
-        // If there are sections missing in the vendor profile it is considered a fatal error.
-        BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": vendor profile %1% is missing machine_model_list, machine_list, filament_list and/or process_list fields.") % file_name;
-        return -1;
+    for (std::string field_name : {"machine_model_list", "machine_list", "filament_list", "process_list"}) {
+        if (!j.contains(field_name)) {
+            BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << ": vendor profile " << vendor_json.string() << " is missing " << field_name << " field." << std::endl;
+            return -1;
+        }
     }
+
+    json pModels = j["machine_model_list"];
+    json pMachine = j["machine_list"];
+    json pFilament = j["filament_list"];
+    json pProcess = j["process_list"];
 
     BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(": vendor %1% has %2% machine_models") % vendor_name % pModels.size();
     for (int n = 0; n < pModels.size(); n++) {
@@ -1120,14 +1216,14 @@ int GuideFrame::LoadProfileFamily(std::string vendor_name, std::string file_name
         std::string strNozzleDiameter;
         std::string strDefaultMaterials;
         std::string strCover;
-        result = Get(vendor_name, vendor_dir, profile_name, profile_path,
-                     Copy("name", strName),
-                     Copy("nozzle_diameter", strNozzleDiameter),
-                     Copy("default_materials", strDefaultMaterials),
-                     CopyWithDefault("cover", strCover, profile_name + "_cover.png"));
+        bool result = Get(vendor_name, vendor_subdir, profile_name, profile_path,
+                          Copy("name", strName),
+                          Copy("nozzle_diameter", strNozzleDiameter),
+                          Copy("default_materials", strDefaultMaterials),
+                          CopyWithDefault("cover", strCover, profile_name + "_cover.png"));
 
         if (!result) {
-            BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": machine_model profile %1% is missing name, nozzle_diameter, and/or default_materials fields.") % (vendor_dir / profile_path);
+            BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": machine_model profile %1% is missing name, nozzle_diameter, and/or default_materials fields.") % (vendor_subdir / profile_path);
             continue;
         }
 
@@ -1159,15 +1255,15 @@ int GuideFrame::LoadProfileFamily(std::string vendor_name, std::string file_name
         std::string strInstantiation;
         std::string strPrinterModel;
         std::string strNozzleDiameter0;
-        result = Get(vendor_name, vendor_dir, profile_name, profile_path,
-                     CopyWithDefault("instantiation", strInstantiation, std::string("false")),
-                     Copy("printer_model", strPrinterModel),
-                     CopyIndex("nozzle_diameter", 0, strNozzleDiameter0));
+        bool result = Get(vendor_name, vendor_subdir, profile_name, profile_path,
+                          CopyWithDefault("instantiation", strInstantiation, std::string("false")),
+                          Copy("printer_model", strPrinterModel),
+                          CopyIndex("nozzle_diameter", 0, strNozzleDiameter0));
 
         if (strInstantiation.compare("true") == 0) {
             if (!result) {
                 // Only complain about missing fields for instantiation=true profiles.
-                BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": machine profile %1% is missing printer_model and/or nozzle_diameter fields.") % (vendor_dir / profile_path);
+                BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": machine profile %1% is missing printer_model and/or nozzle_diameter fields.") % (vendor_subdir / profile_path);
                 continue;
             }
 
@@ -1190,16 +1286,16 @@ int GuideFrame::LoadProfileFamily(std::string vendor_name, std::string file_name
         std::string strFilamentVendor;
         std::string strFilamentType;
         std::vector<std::string> vecCompatiblePrinters;
-        result = Get(vendor_name, vendor_dir, profile_name, profile_path,
-                     CopyWithDefault("instantiation", strInstantiation, std::string("false")),
-                     CopyIndexWithDefault("filament_vendor", 0, strFilamentVendor, std::string("Generic")),
-                     CopyIndex("filament_type", 0, strFilamentType),
-                     Copy("compatible_printers", vecCompatiblePrinters));
+        bool result = Get(vendor_name, vendor_subdir, profile_name, profile_path,
+                          CopyWithDefault("instantiation", strInstantiation, std::string("false")),
+                          CopyIndexWithDefault("filament_vendor", 0, strFilamentVendor, std::string("Generic")),
+                          CopyIndex("filament_type", 0, strFilamentType),
+                          Copy("compatible_printers", vecCompatiblePrinters));
 
         if (strInstantiation.compare("true") == 0) {
             if (!result) {
                 // Only complain about missing fields for instantiation=true profiles.
-                BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": filament profile %1% is missing filament_type and/or compatible_printers fields.") % (vendor_dir / profile_path);
+                BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": filament profile %1% is missing filament_type and/or compatible_printers fields.") % (vendor_subdir / profile_path);
                 continue;
             }
 
@@ -1216,7 +1312,7 @@ int GuideFrame::LoadProfileFamily(std::string vendor_name, std::string file_name
                     model_list = (boost::format("%1%[%2%++%3%]") % model_list % model % nozzle).str();
                 }
                 else {
-                    BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": filament profile %1% has unknown compatible_printer %2%.") % (vendor_dir / profile_path) % compatible_printer;
+                    BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": filament profile %1% has unknown compatible_printer %2%.") % (vendor_subdir / profile_path) % compatible_printer;
                     continue;
                 }
             }
@@ -1236,8 +1332,8 @@ int GuideFrame::LoadProfileFamily(std::string vendor_name, std::string file_name
         std::string profile_path = OneProcess["sub_path"];
 
         std::string strInstantiation;
-        result = Get(vendor_name, vendor_dir, profile_name, profile_path,
-                     CopyWithDefault("instantiation", strInstantiation, std::string("false")));
+        bool result = Get(vendor_name, vendor_subdir, profile_name, profile_path,
+                          CopyWithDefault("instantiation", strInstantiation, std::string("false")));
         // No result == false check necessary because Get is passed defaults for all desired fields.
 
         if (strInstantiation.compare("true") == 0) {

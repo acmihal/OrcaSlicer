@@ -9,8 +9,8 @@
 namespace Slic3r { namespace GUI { namespace ProfileCache {
 
 namespace {
-
 inline std::string delimiter("::");
+} // anonymous namespace
 
 // Remember all of the (vendor_name::profile_name, profile_path) pairs that have been parsed.
 // If a later profile inherits from one of these, the path can be looked up to
@@ -42,6 +42,10 @@ public:
             throw std::runtime_error(std::string("profile ") + vpn + " has not been parsed yet");
         }
         return _vendorProfilePathMap[vpn];
+    }
+
+    static void clear() {
+        _vendorProfilePathMap.clear();
     }
 
 protected:
@@ -76,9 +80,15 @@ public:
         return _vendorPathMap[vendor_name];
     }
 
+    static void clear() {
+        _vendorPathMap.clear();
+    }
+
 protected:
     inline static std::map<std::string, boost::filesystem::path> _vendorPathMap;
 };
+
+namespace {
 
 // Keep track of all of the (vendor_name, profile_name ) pairs that have been visited
 // while searching along a chain of inheritance. This data is used to detect circular
@@ -108,6 +118,11 @@ protected:
 };
 
 } // anonymous namespace
+
+void clear(void) {
+    VendorPathCache::clear();
+    VendorProfilePathCache::clear();
+}
 
 // Argument Object Factories for the get() method
 template <typename T>
@@ -259,10 +274,10 @@ bool Get(const std::string vendor_name,
          Tail... tail) {
     try {
         // Remember this vendor_name -> vendor_path combination.
-        VendorPathCache::store(vendor_name, vendor_path);
+        //VendorPathCache::store(vendor_name, vendor_path);
 
         // Remember this vendor_name::profile_name -> profile_path combination
-        VendorProfilePathCache::store(vendor_name, profile_name, profile_path);
+        //VendorProfilePathCache::store(vendor_name, profile_name, profile_path);
 
         // Detect if we get back to this same vendor_name::profile_name while following a chain of inheritance.
         CircularInheritanceChecker checker(vendor_name, profile_name);
